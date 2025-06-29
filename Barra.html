@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barra em Transformação</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilo base para a fonte e cores */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* cinza muito claro */
+            color: #1e293b; /* cinza escuro */
+        }
+        
+        /* Cores inspiradas no PDF */
+        :root {
+            --cor-principal: #f59e0b; /* Amarelo/Laranja */
+            --cor-texto: #1e293b;
+            --cor-fundo: #f8fafc;
+            --cor-destaque: #0369a1; /* Azul */
+        }
+
+        /* Classes para animação de fade-in */
+        .fade-in-element {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in-element.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Estilo para contadores animados */
+        .counter {
+            transition: all 1.5s ease-out;
+        }
+        
+        /* Estilização da linha do tempo */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 1.25rem;
+            left: -0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background-color: var(--cor-principal);
+            border-radius: 9999px;
+            border: 3px solid var(--cor-fundo);
+        }
+
+        /* Efeito de sobreposição de imagem na seção de abertura */
+        .hero-image-container {
+            position: relative;
+            height: 100vh;
+        }
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 1s ease-in-out;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- SEÇÃO 1: ABERTURA IMPACTANTE -->
+    <header class="hero-image-container text-white">
+        <img id="hero-bg-1" src="https://placehold.co/1920x1080/44403c/ffffff?text=Foto+de+um+casarão+antigo+na+Barra" class="hero-image" alt="Casarão antigo na Barra">
+        <img id="hero-bg-2" src="https://placehold.co/1920x1080/a1a1aa/ffffff?text=Prédio+moderno+e+verticalizado" class="hero-image opacity-0" alt="Prédio moderno e espelhado">
+        
+        <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-center p-4">
+            <div class="fade-in-element">
+                <h1 class="text-4xl md:text-7xl font-black uppercase tracking-wider leading-tight">A Barra</h1>
+                <h2 class="text-3xl md:text-6xl font-black uppercase text-[var(--cor-principal)]">está à venda?</h2>
+                <p class="mt-6 max-w-2xl text-lg md:text-xl font-light">Uma análise visual sobre a transformação de um dos bairros mais icônicos de Salvador.</p>
+                <div class="mt-12 animate-bounce">
+                    <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="overflow-x-hidden">
+
+        <!-- SEÇÃO 2: O BAIRRO EM NÚMEROS -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 fade-in-element">A Nova Realidade da Barra</h2>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-16 fade-in-element">Os números revelam uma mudança drástica, impulsionada pelo mercado imobiliário e pelo turismo.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <!-- Card 1: Anúncios -->
+                    <div class="p-8 rounded-xl shadow-lg bg-gray-50 fade-in-element">
+                        <div class="text-6xl font-black text-[var(--cor-destaque)] mb-4 counter" data-target="2757">0</div>
+                        <h3 class="text-xl font-bold mb-2">Anúncios Ativos</h3>
+                        <p class="text-gray-600">de aluguel por temporada no bairro, uma das maiores concentrações da cidade.</p>
+                    </div>
+                    <!-- Card 2: Tamanho dos Imóveis -->
+                    <div class="p-8 rounded-xl shadow-lg bg-gray-50 fade-in-element" style="transition-delay: 200ms;">
+                        <div class="text-6xl font-black text-[var(--cor-destaque)] mb-4"><span class="counter" data-target="76">0</span>%</div>
+                        <h3 class="text-xl font-bold mb-2">Imóveis Compactos</h3>
+                        <p class="text-gray-600">dos novos empreendimentos possuem unidades com área útil entre 15m² e 35m².</p>
+                    </div>
+                    <!-- Card 3: Rentabilidade -->
+                    <div class="p-8 rounded-xl shadow-lg bg-gray-50 fade-in-element" style="transition-delay: 400ms;">
+                        <div class="text-6xl font-black text-[var(--cor-destaque)] mb-4"><span class="counter" data-target="2">0</span>x</div>
+                        <h3 class="text-xl font-bold mb-2">Maior Rentabilidade</h3>
+                        <p class="text-gray-600">A locação de curta duração (temporada) chega a ser duas vezes mais rentável que a locação tradicional.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 3: LINHA DO TEMPO -->
+        <section class="py-20 bg-[var(--cor-fundo)]">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 fade-in-element">Uma Viagem no Tempo</h2>
+                <div class="relative wrap overflow-hidden p-10 h-full">
+                    <div class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border" style="left: 50%"></div>
+                    
+                    <!-- Item 1: 1870 -->
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto font-bold text-white text-lg">1</h3>
+                        </div>
+                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                            <h3 class="mb-3 font-bold text-gray-800 text-xl">1870</h3>
+                            <p class="text-sm leading-snug tracking-wide text-gray-600">A Ladeira da Barra recebe seus primeiros sinais de urbanização, com pavimentação, calçadas e lampiões. A paisagem ainda é predominantemente rural.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: 1920 -->
+                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto text-white font-bold text-lg">2</h3>
+                        </div>
+                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                            <h3 class="mb-3 font-bold text-gray-800 text-xl">1920</h3>
+                            <p class="text-sm leading-snug tracking-wide text-gray-600">O bairro se consolida como área urbanizada. Bondes e rede elétrica chegam, e as casas passam a ter jardins e recuos, refletindo um novo modo de vida.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Item 3: 1950 -->
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto font-bold text-white text-lg">3</h3>
+                        </div>
+                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                            <h3 class="mb-3 font-bold text-gray-800 text-xl">1950</h3>
+                            <p class="text-sm leading-snug tracking-wide text-gray-600">A chegada da arquitetura moderna. O Edifício Oceania inaugura a verticalização, mudando para sempre a paisagem horizontal da orla.</p>
+                        </div>
+                    </div>
+
+                    <!-- Item 4: Hoje -->
+                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto text-white font-bold text-lg">4</h3>
+                        </div>
+                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                            <h3 class="mb-3 font-bold text-gray-800 text-xl">Hoje</h3>
+                            <p class="text-sm leading-snug tracking-wide text-gray-600">Aceleração da verticalização com foco em "studios". Antigos casarões e comércios de bairro dão lugar a prédios voltados para o turismo de massa.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-10 fade-in-element">
+                    <img src="https://placehold.co/800x450/e2e8f0/334155?text=Desenho+da+evolução+dos+prédios+na+Barra" alt="Evolução do gabarito da Barra" class="rounded-lg shadow-lg">
+                </div>
+            </div>
+        </section>
+
+
+        <!-- SEÇÃO 4: MAPA INTERATIVO -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 fade-in-element">O Mapa da Transformação</h2>
+                <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-12 fade-in-element">Explore as camadas de mudança que redesenham o bairro.</p>
+                <div class="bg-gray-100 rounded-lg shadow-2xl p-4 md:p-8 fade-in-element">
+                    <div class="relative">
+                        <img src="https://placehold.co/1200x700/dbeafe/3b82f6?text=Mapa+base+do+bairro+da+Barra" alt="Mapa da Barra" class="rounded-md w-full">
+                        
+                        <!-- Camada de Novos Prédios -->
+                        <div id="layer-predios" class="absolute inset-0 transition-opacity duration-500 opacity-0">
+                           <img src="https://placehold.co/1200x700/000000/000000?text=" class="opacity-0" alt=""> <!-- Imagem transparente para manter o aspect ratio -->
+                           <span class="absolute text-red-500 text-3xl font-bold" style="top:40%; left:50%">&#9679;</span>
+                           <span class="absolute text-red-500 text-3xl font-bold" style="top:55%; left:40%">&#9679;</span>
+                           <span class="absolute text-red-500 text-3xl font-bold" style="top:60%; left:65%">&#9679;</span>
+                           <span class="absolute text-red-500 text-3xl font-bold" style="top:70%; left:30%">&#9679;</span>
+                           <span class="absolute text-red-500 text-3xl font-bold" style="top:45%; left:25%">&#9679;</span>
+                        </div>
+                         <!-- Camada de Áreas Verdes -->
+                        <div id="layer-verdes" class="absolute inset-0 transition-opacity duration-500 opacity-0">
+                           <img src="https://placehold.co/1200x700/000000/000000?text=" class="opacity-0" alt="">
+                           <div class="absolute w-24 h-24 bg-green-500/50 rounded-full" style="top:20%; left:40%;"></div>
+                           <div class="absolute w-32 h-32 bg-green-500/50 rounded-full" style="top:50%; left:15%;"></div>
+                           <div class="absolute w-20 h-20 bg-green-500/50 rounded-full" style="top:65%; left:70%;"></div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex flex-wrap justify-center gap-4">
+                        <button onclick="toggleLayer('layer-predios')" class="px-6 py-2 bg-[var(--cor-destaque)] text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors">Novos Prédios</button>
+                        <button onclick="toggleLayer('layer-verdes')" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SEÇÃO 5: VOZES DA BARRA -->
+        <section class="py-20 bg-slate-800 text-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-12 fade-in-element">Vozes da Barra</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-8 border border-slate-700 rounded-lg bg-slate-800/50 fade-in-element">
+                        <p class="text-xl italic">"Sou a única moradora fixa do meu andar. O resto é turista que muda toda semana."</p>
+                        <span class="block mt-4 text-sm text-slate-400">- Moradora antiga</span>
+                    </div>
+                     <div class="p-8 border border-slate-700 rounded-lg bg-slate-800/50 fade-in-element" style="transition-delay: 200ms;">
+                        <p class="text-xl italic">"Gostava mais das casas antigas, tinha mais vida. Agora é só parede de prédio e portão de garagem."</p>
+                        <span class="block mt-4 text-sm text-slate-400">- Comerciante local</span>
+                    </div>
+                     <div class="p-8 border border-slate-700 rounded-lg bg-slate-800/50 fade-in-element" style="transition-delay: 400ms;">
+                        <p class="text-xl italic">"É prédio pra todo lado. A gente não vive só de Carnaval e turista, a gente vive aqui o ano todo."</p>
+                        <span class="block mt-4 text-sm text-slate-400">- Trabalhador do bairro</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="mb-2">&copy; 2025 Barra em Transformação.</p>
+            <p class="text-sm text-gray-400">Este site é uma interpretação visual e interativa baseada no estudo "Percepções da Barra", realizado por estudantes da Faculdade de Arquitetura da Universidade Federal da Bahia.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Animação de fade-in ao rolar a página
+        const fadeInElements = document.querySelectorAll('.fade-in-element');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        fadeInElements.forEach(el => {
+            observer.observe(el);
+        });
+
+        // Animação dos contadores
+        const counterObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = +el.getAttribute('data-target');
+                    const duration = 1500;
+                    const stepTime = 20;
+                    const steps = duration / stepTime;
+                    const increment = target / steps;
+                    let current = 0;
+
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            el.innerText = target.toLocaleString('pt-BR');
+                            clearInterval(timer);
+                        } else {
+                            el.innerText = Math.ceil(current).toLocaleString('pt-BR');
+                        }
+                    }, stepTime);
+                    
+                    observer.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        document.querySelectorAll('.counter').forEach(counter => {
+            counterObserver.observe(counter);
+        });
+
+        // Efeito de troca de imagem na seção de abertura
+        const heroBg1 = document.getElementById('hero-bg-1');
+        const heroBg2 = document.getElementById('hero-bg-2');
+        setInterval(() => {
+            heroBg1.classList.toggle('opacity-0');
+            heroBg2.classList.toggle('opacity-0');
+        }, 5000); // Troca a cada 5 segundos
+        
+        // Lógica do mapa interativo
+        let activeLayer = null;
+        function toggleLayer(layerId) {
+            const layer = document.getElementById(layerId);
+            
+            if (activeLayer === layer) {
+                // Se clicar na camada ativa, desativa
+                layer.classList.add('opacity-0');
+                activeLayer = null;
+            } else {
+                // Desativa a camada anterior, se houver
+                if (activeLayer) {
+                    activeLayer.classList.add('opacity-0');
+                }
+                // Ativa a nova camada
+                layer.classList.remove('opacity-0');
+                activeLayer = layer;
+            }
+        }
+    </script>
+</body>
+</html>
