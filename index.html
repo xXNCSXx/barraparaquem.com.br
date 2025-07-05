@@ -282,8 +282,7 @@
         const prediosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/AirDNA.geojson';
         const vegetacaoJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Mapa_Veg.geojson';
         const gabaritosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Gab_ABM_2016.geojson';
-		
- 
+		const poligonalBairroUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Poligonal_Bairro_Barra.geojson';
 
 
         let map;
@@ -302,13 +301,31 @@
             }).addTo(map);
 
             // Cria painéis para controlar a ordem das camadas
+            map.createPane('boundaryPane');
+            map.getPane('boundaryPane').style.zIndex = 397; // Mais ao fundo de tudo
+            
             map.createPane('vegetationPane');
-            map.getPane('vegetationPane').style.zIndex = 398; // Mais ao fundo
+            map.getPane('vegetationPane').style.zIndex = 398; 
             
             map.createPane('gabaritosPane');
-            map.getPane('gabaritosPane').style.zIndex = 399; // No meio
+            map.getPane('gabaritosPane').style.zIndex = 399; 
 
             // Marcadores (pontos dos prédios) usarão o painel padrão com z-index 400
+            
+            // Carrega a camada fixa da poligonal do bairro assim que o mapa inicia
+            loadGeoJsonLayer(poligonalBairroUrl, {
+                pane: 'boundaryPane',
+                style: {
+                    color: 'red',
+                    weight: 2,
+                    dashArray: '5, 5', // Estilo tracejado
+                    fillOpacity: 0 // Preenchimento transparente
+                }
+            }).then(layer => {
+                layer.addTo(map);
+            }).catch(error => {
+                console.error("Erro ao carregar a camada da poligonal do bairro:", error);
+            });
         });
         
         async function loadGeoJsonLayer(url, options) {
