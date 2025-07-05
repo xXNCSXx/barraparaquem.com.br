@@ -366,6 +366,7 @@
             } else {
                 try {
                     prediosLayer = await loadGeoJsonLayer(prediosJsonUrl, {
+                        // Para pontos
                         pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
                             radius: 6,
                             fillColor: "#f9340f",
@@ -374,9 +375,18 @@
                             opacity: 1,
                             fillOpacity: 0.8
                         }),
+                        // Para polígonos
+                        style: (feature) => ({
+                            fillColor: "#f9340f",
+                            color: "#f9340f",
+                            weight: 1.5,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }),
                         onEachFeature: (feature, layer) => {
-                            if (feature.properties && feature.properties.nome_edifi) {
-                                layer.bindPopup(`<strong>${feature.properties.nome_edifi}</strong>`);
+                            if (feature.properties) {
+                                const popupContent = `<strong>${feature.properties.Title || 'Sem Título'}</strong><br>${feature.properties.Address || 'Endereço não disponível.'}<br>Receita Anual: R$ ${feature.properties.Revenue || 'N/A'}`;
+                                layer.bindPopup(popupContent);
                             }
                         }
                     });
