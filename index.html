@@ -301,15 +301,25 @@
         
         const prediosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/EDF_Novos_Empreendimentos.geojson';
         const vegetacaoJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Mapa_Veg.geojson';
-        const gabaritosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Gab_ABM_2016.geojson';
 		const poligonalBairroUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Poligonal_Bairro_Barra.geojson';
         const airDnaUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/AirDNA.geojson';
 
+        // URLs e estilos para a camada de Gabaritos
+        const gabaritosLayersData = [
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/12_2016.geojson', style: { color: '#d9a149', fillColor: '#d9a149', fillOpacity: 0.8, weight: 1 } },
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/18_2016.geojson', style: { color: '#b05c76', fillColor: '#b05c76', fillOpacity: 0.8, weight: 1 } },
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/36_2016.geojson', style: { color: '#9c3354', fillColor: '#9c3354', fillOpacity: 0.8, weight: 1 } },
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/45_2016.geojson', style: { color: '#c4c85d', fillColor: '#c4c85d', fillOpacity: 0.8, weight: 1 } },
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/60_2016.geojson', style: { color: '#9b1114', fillColor: '#9b1114', fillOpacity: 0.8, weight: 1 } },
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/6_2016.geojson', style: { color: '#e17979', fillColor: '#e17979', fillOpacity: 0.8, weight: 1 } },
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/75_2016.geojson', style: { color: '#a47158', fillColor: '#a47158', fillOpacity: 0.8, weight: 1 } },
+            { url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/areia_2016.geojson', style: { color: '#e5be8b', fillColor: '#e5be8b', fillOpacity: 0.6, weight: 1 } }
+        ];
 
         let map;
         let prediosLayer = null;
         let verdesLayer = null;
-        let gabaritosLayer = null;
+        let gabaritosLayerGroup = null; // Alterado para um grupo de camadas
         let airDnaLayer = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -378,7 +388,7 @@
                         // Para polígonos
                         style: (feature) => ({
                             fillColor: "#f9340f",
-                            color: "#f9340f",
+                            color: "#ffffff",
                             weight: 1.5,
                             opacity: 1,
                             fillOpacity: 0.8
@@ -443,27 +453,26 @@
         }
 
         async function toggleGabaritosLayer() {
-            if (gabaritosLayer && map.hasLayer(gabaritosLayer)) {
-                map.removeLayer(gabaritosLayer);
-                gabaritosLayer = null;
+            if (gabaritosLayerGroup && map.hasLayer(gabaritosLayerGroup)) {
+                map.removeLayer(gabaritosLayerGroup);
+                gabaritosLayerGroup = null;
             } else {
                 try {
-                    gabaritosLayer = await loadGeoJsonLayer(gabaritosJsonUrl, {
-                        pane: 'gabaritosPane',
-                        style: (feature) => ({
-                            color: "#4f46e5",
-                            weight: 1,
-                            opacity: 0.7,
-                            fillColor: "#818cf8",
-                            fillOpacity: 0.4
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            layer.bindPopup("Gabarito ABN - 2016");
-                        }
-                    });
-                    gabaritosLayer.addTo(map);
+                    gabaritosLayerGroup = L.layerGroup(); // Cria um grupo para todas as camadas de gabaritos
+                    
+                    const promises = gabaritosLayersData.map(data => 
+                        loadGeoJsonLayer(data.url, {
+                            pane: 'gabaritosPane',
+                            style: data.style
+                        })
+                    );
+
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => gabaritosLayerGroup.addLayer(layer));
+                    
+                    gabaritosLayerGroup.addTo(map);
                 } catch (error) {
-                    console.error("Erro ao carregar a camada de gabaritos:", error);
+                    console.error("Erro ao carregar as camadas de gabaritos:", error);
                 }
             }
         }
