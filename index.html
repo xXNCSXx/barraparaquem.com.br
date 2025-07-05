@@ -279,7 +279,7 @@
         // LÓGICA DO MAPA INTERATIVO COM LEAFLET E GEOJSON
         // ==================================================================
         
-        const prediosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/AirDNA.geojson';
+        const prediosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/EDF_Novos_Empreendimentos.geojson';
         const vegetacaoJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Mapa_Veg.geojson';
         const gabaritosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Gab_ABM_2016.geojson';
 		const poligonalBairroUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Poligonal_Bairro_Barra.geojson';
@@ -344,10 +344,19 @@
             } else {
                 try {
                     prediosLayer = await loadGeoJsonLayer(prediosJsonUrl, {
+                        // Para pontos
                         pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
                             radius: 6,
-                            fillColor: "#ff4500",
+                            fillColor: "#f9340f",
                             color: "#ffffff",
+                            weight: 1.5,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }),
+                        // Para polígonos
+                        style: (feature) => ({
+                            fillColor: "#f9340f",
+                            color: "#f9340f",
                             weight: 1.5,
                             opacity: 1,
                             fillOpacity: 0.8
