@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barra em Transformação</title>
     
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Leaflet.js CSS e JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
-    <!-- Leaflet.markercluster CSS e JS (Plugin para agrupar pontos) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
@@ -114,11 +110,15 @@
             margin-right: 8px;
             opacity: 0.8;
         }
+        .custom-tree-icon {
+            font-size: 18px;
+            background: transparent;
+            border: none;
+        }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- SEÇÃO 1: ABERTURA IMPACTANTE -->
     <header class="hero-image-container text-white">
         <img id="hero-bg-1" src="https://placehold.co/1920x1080/44403c/ffffff?text=Foto+de+um+casarão+antigo+na+Barra" class="hero-image" alt="Casarão antigo na Barra">
         <img id="hero-bg-2" src="https://placehold.co/1920x1080/a1a1aa/ffffff?text=Prédio+moderno+e+verticalizado" class="hero-image opacity-0" alt="Prédio moderno e espelhado">
@@ -216,7 +216,6 @@
         </section>
 
 
-        <!-- SEÇÃO 4: MAPA INTERATIVO -->
         <section class="py-20 bg-white">
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 fade-in-element">O Mapa da Transformação</h2>
@@ -230,6 +229,7 @@
                         <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirDNA</button>
                         <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
                         <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes</button>
+                        <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área de Projetos FMLF</button>
                     </div>
                 </div>
             </div>
@@ -321,8 +321,11 @@
         
         const prediosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/EDF_Novos_Empreendimentos.geojson';
         const vegetacaoJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Mapa_Veg.geojson';
+        const vegetacaoJardJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Vegetacao_jard.geojson';
+        const vegetacaoArvoresJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Vegetacao_arvores.geojson';
 		const poligonalBairroUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Poligonal_Bairro_Barra.geojson';
         const airDnaUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/AirDNA.geojson';
+        const projetosFmlfUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Area_Projetos_FMLF.geojson';
 
         // URLs e estilos para a camada de Gabaritos
         const gabaritosLayersData = [
@@ -341,6 +344,7 @@
         let verdesLayer = null;
         let gabaritosLayerGroup = null; 
         let airDnaLayer = null;
+        let projetosFmlfLayer = null;
         let gabaritosLegend = null; // Variável para guardar a legenda
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -361,9 +365,12 @@
             map.getPane('vegetationPane').style.zIndex = 398; 
             
             map.createPane('gabaritosPane');
-            map.getPane('gabaritosPane').style.zIndex = 399; 
+            map.getPane('gabaritosPane').style.zIndex = 399;
 
-            // Marcadores e clusters usarão o painel padrão (z-index 400+)
+            map.createPane('projetosPane');
+            map.getPane('projetosPane').style.zIndex = 400; 
+
+            // Marcadores e clusters usarão o painel padrão (z-index 401+)
             
             // Carrega a camada fixa da poligonal do bairro
             loadGeoJsonLayer(poligonalBairroUrl, {
@@ -525,20 +532,75 @@
                 verdesLayer = null;
             } else {
                 try {
-                    verdesLayer = await loadGeoJsonLayer(vegetacaoJsonUrl, {
-                        pane: 'vegetationPane',
-                        style: (feature) => ({
-                            weight: 0,
-                            fillColor: "#32CD32",
-                            fillOpacity: 0.5
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            layer.bindPopup("Área de Vegetação");
+                    verdesLayer = L.layerGroup();
+
+                    const vegetationLayersData = [
+                        { // Camada de polígonos de vegetação
+                            url: vegetacaoJsonUrl,
+                            options: {
+                                pane: 'vegetationPane',
+                                style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }),
+                                onEachFeature: (feature, layer) => { layer.bindPopup("Área de Vegetação"); }
+                            }
+                        },
+                        { // Camada de polígonos de jardins
+                            url: vegetacaoJardJsonUrl,
+                            options: {
+                                pane: 'vegetationPane',
+                                style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }),
+                                onEachFeature: (feature, layer) => { layer.bindPopup("Jardim"); }
+                            }
+                        },
+                        { // Camada de pontos de árvores
+                            url: vegetacaoArvoresJsonUrl,
+                            options: {
+                                pane: 'vegetationPane',
+                                pointToLayer: (feature, latlng) => {
+                                    const treeIcon = L.divIcon({
+                                        html: '🌳',
+                                        className: 'custom-tree-icon',
+                                        iconSize: [10, 10]
+                                    });
+                                    return L.marker(latlng, { icon: treeIcon });
+                                },
+                                onEachFeature: (feature, layer) => { layer.bindPopup("Árvore"); }
+                            }
                         }
-                    });
+                    ];
+
+                    const promises = vegetationLayersData.map(data => loadGeoJsonLayer(data.url, data.options));
+
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => verdesLayer.addLayer(layer));
+                    
                     verdesLayer.addTo(map);
                 } catch (error) {
-                    console.error("Erro ao carregar a camada de vegetação:", error);
+                    console.error("Erro ao carregar as camadas de vegetação:", error);
+                }
+            }
+        }
+
+        async function toggleProjetosFmlfLayer() {
+            if (projetosFmlfLayer && map.hasLayer(projetosFmlfLayer)) {
+                map.removeLayer(projetosFmlfLayer);
+                projetosFmlfLayer = null;
+            } else {
+                try {
+                    projetosFmlfLayer = await loadGeoJsonLayer(projetosFmlfUrl, {
+                        pane: 'projetosPane',
+                        style: (feature) => ({
+                            color: "#d53cd4",
+                            weight: 0,
+                            fillColor: "#d53cd4",
+                            fillOpacity: 0.4
+                        }),
+                        onEachFeature: (feature, layer) => {
+                            layer.bindPopup("Área de Projetos FMLF");
+                        }
+                    });
+                    projetosFmlfLayer.addTo(map);
+                } catch (error) {
+                    console.error("Erro ao carregar a camada de projetos FMLF:", error);
                 }
             }
         }
