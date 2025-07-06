@@ -108,7 +108,7 @@
             height: 18px;
             float: left;
             margin-right: 8px;
-            opacity: 0.8;
+            opacity: 1;
         }
         .custom-tree-icon {
             font-size: 18px;
@@ -320,7 +320,6 @@
         // LÓGICA DO MAPA INTERATIVO COM LEAFLET E GEOJSON
         // ==================================================================
         
-        const prediosJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/EDF_Novos_Empreendimentos.geojson';
         const vegetacaoJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Mapa_Veg.geojson';
         const vegetacaoJardJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Vegetacao_jard.geojson';
         const vegetacaoArvoresJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Vegetacao_arvores.geojson';
@@ -362,6 +361,7 @@
         let projetosFmlfLayer = null;
         let gabaritosLegend = null;
         let gabaritos2008Legend = null;
+        let prediosLegend = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -417,36 +417,64 @@
             if (prediosLayer && map.hasLayer(prediosLayer)) {
                 map.removeLayer(prediosLayer);
                 prediosLayer = null;
+                if (prediosLegend) {
+                    map.removeControl(prediosLegend);
+                    prediosLegend = null;
+                }
             } else {
                 try {
-                    prediosLayer = await loadGeoJsonLayer(prediosJsonUrl, {
-                        // Para pontos
-                        pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
-                            radius: 6,
-                            fillColor: "#f9340f",
-                            color: "#ffffff",
-                            weight: 1.5,
-                            opacity: 1,
-                            fillOpacity: 0.8
-                        }),
-                        // Para polígonos
-                        style: (feature) => ({
-                            fillColor: "#f9340f",
-                            color: "#f9340f",
-                            weight: 1.5,
-                            opacity: 1,
-                            fillOpacity: 0.8
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            if (feature.properties) {
-                                const popupContent = `<strong>${feature.properties.Title || 'Sem Título'}</strong><br>${feature.properties.Address || 'Endereço não disponível.'}<br>Receita Anual: R$ ${feature.properties.Revenue || 'N/A'}`;
-                                layer.bindPopup(popupContent);
-                            }
+                    prediosLayer = L.layerGroup();
+
+                    const novosEmpreendimentosData = [
+                        { name: 'Em Projeto', url: 'https://xxncsxx.github.io/barraparaquem.com.br/EDF_Projeto.geojson', style: { color: '#fba486', fillColor: '#fba486', fillOpacity: 1, weight: 1 } },
+                        { name: 'Finalizados', url: 'https://xxncsxx.github.io/barraparaquem.com.br/EDF_finalizados.geojson', style: { color: '#67010d', fillColor: '#67010d', fillOpacity: 1, weight: 1 } },
+                        { name: 'Em Obras', url: 'https://xxncsxx.github.io/barraparaquem.com.br/EDF_Em_Obras.geojson', style: { color: '#eb3729', fillColor: '#eb3729', fillOpacity: 1, weight: 1 } }
+                    ];
+
+                    const onEachFeaturePopup = (feature, layer) => {
+                        if (feature.properties) {
+                            const popupContent = `<strong>${feature.properties.Title || 'Sem Título'}</strong><br>${feature.properties.Address || 'Endereço não disponível.'}<br>Receita Anual: R$ ${feature.properties.Revenue || 'N/A'}`;
+                            layer.bindPopup(popupContent);
                         }
-                    });
+                    };
+
+                    const promises = novosEmpreendimentosData.map(data =>
+                        loadGeoJsonLayer(data.url, {
+                            style: data.style,
+                            pointToLayer: (feature, latlng) => L.circleMarker(latlng, {
+                                radius: 6,
+                                fillColor: data.style.fillColor,
+                                color: "#ffffff",
+                                weight: 1,
+                                opacity: 1,
+                                fillOpacity: 1
+                            }),
+                            onEachFeature: onEachFeaturePopup
+                        })
+                    );
+
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => prediosLayer.addLayer(layer));
+
                     prediosLayer.addTo(map);
+
+                    if (!prediosLegend) {
+                        prediosLegend = L.control({position: 'bottomright'});
+                        prediosLegend.onAdd = function (map) {
+                            const div = L.DomUtil.create('div', 'info legend');
+                            div.innerHTML += '<h4>Novos Empreendimentos</h4>';
+                            novosEmpreendimentosData.forEach(item => {
+                                div.innerHTML += 
+                                    '<i style="background:' + item.style.fillColor + '"></i> ' +
+                                    item.name + '<br>';
+                            });
+                            return div;
+                        };
+                        prediosLegend.addTo(map);
+                    }
+
                 } catch (error) {
-                    console.error("Erro ao carregar a camada de prédios:", error);
+                    console.error("Erro ao carregar a camada de novos empreendimentos:", error);
                 }
             }
         }
@@ -527,7 +555,7 @@
                             div.innerHTML += '<h4>LEGENDA GABARITOS 2016</h4>';
                             gabaritosLayersData.forEach(item => {
                                 div.innerHTML += 
-                                    '<i style="background:' + item.style.fillColor + '"></i> ' +
+                                    '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
                                     item.name + '<br>';
                             });
                             return div;
@@ -571,7 +599,7 @@
                             div.innerHTML += '<h4>LEGENDA GABARITOS 2008</h4>';
                             gabaritos2008LayersData.forEach(item => {
                                 div.innerHTML += 
-                                    '<i style="background:' + item.style.fillColor + '"></i> ' +
+                                    '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
                                     item.name + '<br>';
                             });
                             return div;
