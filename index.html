@@ -365,7 +365,20 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            map = L.map('map').setView([-13.007, -38.520], 15);
+            // Define os limites geográficos da área da Barra
+            const bounds = L.latLngBounds(
+                L.latLng(-13.02, -38.54), // Canto Sudoeste
+                L.latLng(-12.99, -38.50)  // Canto Nordeste
+            );
+
+            // Inicia o mapa com as novas opções de limite
+            map = L.map('map', {
+                center: [-13.007, -38.520],
+                zoom: 15,
+                minZoom: 13, // Limita o zoom out para não se afastar muito
+                maxBounds: bounds, // Trava a navegação dentro dos limites definidos
+                maxBoundsViscosity: 1.0 // Torna a barreira de navegação "sólida"
+            });
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -455,7 +468,6 @@
 
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => prediosLayer.addLayer(layer));
-
                     prediosLayer.addTo(map);
 
                     if (!prediosLegend) {
