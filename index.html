@@ -228,6 +228,7 @@
                         <button onclick="togglePrediosLayer()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors">Novos Empreendimentos</button>
                         <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirDNA</button>
                         <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
+                        <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos ABN - 2008</button>
                         <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes</button>
                         <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área de Projetos FMLF</button>
                     </div>
@@ -327,25 +328,40 @@
         const airDnaUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/AirDNA.geojson';
         const projetosFmlfUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Area_Projetos_FMLF.geojson';
 
-        // URLs e estilos para a camada de Gabaritos
+        // URLs e estilos para a camada de Gabaritos 2016
         const gabaritosLayersData = [
-            { name: 'Faixa de areia', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/areia_2016.geojson', style: { color: '#e5be8b', fillColor: '#e5be8b', fillOpacity: 0.6, weight: 1 } },
-            { name: '6 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/6_2016.geojson', style: { color: '#e17979', fillColor: '#e17979', fillOpacity: 0.8, weight: 1 } },
-            { name: '12 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/12_2016.geojson', style: { color: '#d9a149', fillColor: '#d9a149', fillOpacity: 0.8, weight: 1 } },
-            { name: '18 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/18_2016.geojson', style: { color: '#b05c76', fillColor: '#b05c76', fillOpacity: 0.8, weight: 1 } },
-            { name: '36 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/36_2016.geojson', style: { color: '#9c3354', fillColor: '#9c3354', fillOpacity: 0.8, weight: 1 } },
-            { name: '45 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/45_2016.geojson', style: { color: '#c4c85d', fillColor: '#c4c85d', fillOpacity: 0.8, weight: 1 } },
-            { name: '60 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/60_2016.geojson', style: { color: '#9b1114', fillColor: '#9b1114', fillOpacity: 0.8, weight: 1 } },
-            { name: '75 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/75_2016.geojson', style: { color: '#a47158', fillColor: '#a47158', fillOpacity: 0.8, weight: 1 } }
+            { name: 'Faixa de areia', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/areia_2016.geojson', style: { color: '#e5be8b', fillColor: '#e5be8b', fillOpacity: 0.6, weight: 1 } },
+            { name: '6 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/6_2016.geojson', style: { color: '#e17979', fillColor: '#e17979', fillOpacity: 0.8, weight: 1 } },
+            { name: '12 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/12_2016.geojson', style: { color: '#d9a149', fillColor: '#d9a149', fillOpacity: 0.8, weight: 1 } },
+            { name: '18 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/18_2016.geojson', style: { color: '#b05c76', fillColor: '#b05c76', fillOpacity: 0.8, weight: 1 } },
+            { name: '36 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/36_2016.geojson', style: { color: '#9c3354', fillColor: '#9c3354', fillOpacity: 0.8, weight: 1 } },
+            { name: '45 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/45_2016.geojson', style: { color: '#c4c85d', fillColor: '#c4c85d', fillOpacity: 0.8, weight: 1 } },
+            { name: '60 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/60_2016.geojson', style: { color: '#9b1114', fillColor: '#9b1114', fillOpacity: 0.8, weight: 1 } },
+            { name: '75 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/75_2016.geojson', style: { color: '#a47158', fillColor: '#a47158', fillOpacity: 0.8, weight: 1 } }
+        ];
+
+        // URLs e estilos para a camada de Gabaritos 2008
+        const gabaritos2008LayersData = [
+            { name: 'Faixa 12m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_12m.geojson', style: { color: '#ffff00', fillColor: '#ffff00', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 15m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_15m.geojson', style: { color: '#ff7040', fillColor: '#ff7040', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 18m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_18m.geojson', style: { color: '#ffd040', fillColor: '#ffd040', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 24m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_24m.geojson', style: { color: '#ffb8a0', fillColor: '#ffb8a0', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 36m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_36m.geojson', style: { color: '#ff80c0', fillColor: '#ff80c0', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 45m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_45m.geojson', style: { color: '#a0a0ff', fillColor: '#a0a0ff', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 6m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_6m.geojson', style: { color: '#a0ffa0', fillColor: '#a0ffa0', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Praias', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_praias.geojson', style: { color: '#b0ffff', fillColor: '#b0ffff', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Preservação', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_preservacao.geojson', style: { color: '#009090', fillColor: '#009090', fillOpacity: 0.8, weight: 1 } }
         ];
 
         let map;
         let prediosLayer = null;
         let verdesLayer = null;
         let gabaritosLayerGroup = null; 
+        let gabaritos2008LayerGroup = null;
         let airDnaLayer = null;
         let projetosFmlfLayer = null;
-        let gabaritosLegend = null; // Variável para guardar a legenda
+        let gabaritosLegend = null;
+        let gabaritos2008Legend = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -504,12 +520,11 @@
                     
                     gabaritosLayerGroup.addTo(map);
                     
-                    // Adiciona a legenda
                     if (!gabaritosLegend) {
                         gabaritosLegend = L.control({position: 'bottomright'});
                         gabaritosLegend.onAdd = function (map) {
                             const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>LEGENDA</h4>';
+                            div.innerHTML += '<h4>LEGENDA GABARITOS 2016</h4>';
                             gabaritosLayersData.forEach(item => {
                                 div.innerHTML += 
                                     '<i style="background:' + item.style.fillColor + '"></i> ' +
@@ -519,9 +534,52 @@
                         };
                         gabaritosLegend.addTo(map);
                     }
-
                 } catch (error) {
-                    console.error("Erro ao carregar as camadas de gabaritos:", error);
+                    console.error("Erro ao carregar as camadas de gabaritos 2016:", error);
+                }
+            }
+        }
+
+        async function toggleGabaritos2008Layer() {
+            if (gabaritos2008LayerGroup && map.hasLayer(gabaritos2008LayerGroup)) {
+                map.removeLayer(gabaritos2008LayerGroup);
+                gabaritos2008LayerGroup = null;
+                if (gabaritos2008Legend) {
+                    map.removeControl(gabaritos2008Legend);
+                    gabaritos2008Legend = null;
+                }
+            } else {
+                try {
+                    gabaritos2008LayerGroup = L.layerGroup(); 
+                    
+                    const promises = gabaritos2008LayersData.map(data => 
+                        loadGeoJsonLayer(data.url, {
+                            pane: 'gabaritosPane',
+                            style: data.style
+                        })
+                    );
+
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => gabaritos2008LayerGroup.addLayer(layer));
+                    
+                    gabaritos2008LayerGroup.addTo(map);
+                    
+                    if (!gabaritos2008Legend) {
+                        gabaritos2008Legend = L.control({position: 'bottomright'});
+                        gabaritos2008Legend.onAdd = function (map) {
+                            const div = L.DomUtil.create('div', 'info legend');
+                            div.innerHTML += '<h4>LEGENDA GABARITOS 2008</h4>';
+                            gabaritos2008LayersData.forEach(item => {
+                                div.innerHTML += 
+                                    '<i style="background:' + item.style.fillColor + '"></i> ' +
+                                    item.name + '<br>';
+                            });
+                            return div;
+                        };
+                        gabaritos2008Legend.addTo(map);
+                    }
+                } catch (error) {
+                    console.error("Erro ao carregar as camadas de gabaritos 2008:", error);
                 }
             }
         }
@@ -559,7 +617,7 @@
                                     const treeIcon = L.divIcon({
                                         html: '🌳',
                                         className: 'custom-tree-icon',
-                                        iconSize: [10, 10]
+                                        iconSize: [20, 20]
                                     });
                                     return L.marker(latlng, { icon: treeIcon });
                                 },
