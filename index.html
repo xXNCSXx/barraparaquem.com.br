@@ -407,6 +407,20 @@
             { name: 'Praias', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_praias.geojson', style: { color: '#b0ffff', fillColor: '#b0ffff', fillOpacity: 0.8, weight: 1 } },
             { name: 'Preservação', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_preservacao.geojson', style: { color: '#009090', fillColor: '#009090', fillOpacity: 0.8, weight: 1 } }
         ];
+        
+        // URLs e estilos para a camada de Uso do Solo 2011
+        const usoSolo2011Data = [
+            { name: 'Residencial', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/RESIDENCIAL_2011.geojson', style: { color: '#fcce23', fillColor: '#fcce23', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Não Identificado/Abandonado', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/NAO_IDENTIFICADO_ABANDONADO_OU_SEM_USO_2011.geojson', style: { color: '#fca732', fillColor: '#fca732', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Misto (Residencial/Comércio)', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/MISTO_RESIDENCIAL_COMERCIO_EOU_SERVICO_2011.geojson', style: { color: '#f48153', fillColor: '#f48153', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Misto (Hospedagem/Comércio)', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/MISTO_HOSPEDAGEM_COMERCIO_EOU_SERVICO_2011.geojson', style: { color: '#e06462', fillColor: '#e06462', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Institucional', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/INSTITUCIONAL_2011.geojson', style: { color: '#cb4778', fillColor: '#cb4778', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Hospedagem', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/HOSPEDAGEM_2011.geojson', style: { color: '#af2b8c', fillColor: '#af2b8c', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Estacionamento', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/ESTACIONAMENTO_2011.geojson', style: { color: '#910ca5', fillColor: '#910ca5', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Em Obras', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/EM_OBRAS_2011.geojson', style: { color: '#6a01a4', fillColor: '#6a01a4', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Comércio e/ou Serviço', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/COMERCIO_EOU_SERVICO_2011.geojson', style: { color: '#40059b', fillColor: '#40059b', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Saúde', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/SAUDE_2011.geojson', style: { color: '#c026d3', fillColor: '#c026d3', fillOpacity: 0.8, weight: 1 } }
+        ];
 
         let map;
         let prediosLayer = null;
@@ -415,26 +429,25 @@
         let gabaritos2008LayerGroup = null;
         let airDnaLayer = null;
         let projetosFmlfLayer = null;
-        let usoSolo2011Layer = null; // Nova variável de camada
+        let usoSolo2011LayerGroup = null; // Alterado para LayerGroup
         let gabaritosLegend = null;
         let gabaritos2008Legend = null;
+        let usoSolo2011Legend = null; // Nova variável de legenda
         let prediosLegend = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // Define os limites geográficos da área da Barra
             const bounds = L.latLngBounds(
-                L.latLng(-13.02, -38.54), // Canto Sudoeste
-                L.latLng(-12.99, -38.50)  // Canto Nordeste
+                L.latLng(-13.02, -38.54),
+                L.latLng(-12.99, -38.50)
             );
 
-            // Inicia o mapa com as novas opções de limite
             map = L.map('map', {
                 center: [-13.007, -38.520],
                 zoom: 15,
-                minZoom: 14, // Limita o zoom out para não se afastar muito
-                maxBounds: bounds, // Trava a navegação dentro dos limites definidos
-                maxBoundsViscosity: 1.0 // Torna a barreira de navegação "sólida"
+                minZoom: 14,
+                maxBounds: bounds,
+                maxBoundsViscosity: 1.0
             });
 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -443,22 +456,15 @@
                 maxZoom: 20
             }).addTo(map);
 
-            // Cria painéis para controlar a ordem das camadas
             map.createPane('boundaryPane');
             map.getPane('boundaryPane').style.zIndex = 397; 
-            
             map.createPane('vegetationPane');
             map.getPane('vegetationPane').style.zIndex = 398; 
-            
             map.createPane('gabaritosPane');
             map.getPane('gabaritosPane').style.zIndex = 399;
-
             map.createPane('projetosPane');
             map.getPane('projetosPane').style.zIndex = 400; 
 
-            // Marcadores e clusters usarão o painel padrão (z-index 401+)
-            
-            // Carrega a camada fixa da poligonal do bairro
             loadGeoJsonLayer(poligonalBairroUrl, {
                 pane: 'boundaryPane',
                 style: {
@@ -682,27 +688,53 @@
         }
 
         async function toggleUsoSolo2011Layer() {
-            if (usoSolo2011Layer && map.hasLayer(usoSolo2011Layer)) {
-                map.removeLayer(usoSolo2011Layer);
-                usoSolo2011Layer = null;
+            if (usoSolo2011LayerGroup && map.hasLayer(usoSolo2011LayerGroup)) {
+                map.removeLayer(usoSolo2011LayerGroup);
+                usoSolo2011LayerGroup = null;
+                if (usoSolo2011Legend) {
+                    map.removeControl(usoSolo2011Legend);
+                    usoSolo2011Legend = null;
+                }
             } else {
                 try {
-                    const usoSolo2011Url = 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/SAUDE_2011.geojson';
-                    usoSolo2011Layer = await loadGeoJsonLayer(usoSolo2011Url, {
-                        pane: 'gabaritosPane', // Reutilizando um painel existente para o z-index
-                        style: (feature) => ({
-                            color: "#c026d3", // Cor fúcsia
-                            weight: 1,
-                            fillColor: "#c026d3",
-                            fillOpacity: 0.6
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            layer.bindPopup("Uso do Solo (2011): Saúde");
+                    usoSolo2011LayerGroup = L.layerGroup();
+                    
+                    const onEachFeaturePopup = (feature, layer) => {
+                        const layerName = Object.keys(feature.properties)[0];
+                        if (layerName) {
+                            layer.bindPopup(`Uso do Solo (2011): ${layerName}`);
                         }
-                    });
-                    usoSolo2011Layer.addTo(map);
+                    };
+
+                    const promises = usoSolo2011Data.map(data => 
+                        loadGeoJsonLayer(data.url, {
+                            pane: 'gabaritosPane',
+                            style: data.style,
+                            onEachFeature: onEachFeaturePopup
+                        })
+                    );
+
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => usoSolo2011LayerGroup.addLayer(layer));
+                    
+                    usoSolo2011LayerGroup.addTo(map);
+                    
+                    if (!usoSolo2011Legend) {
+                        usoSolo2011Legend = L.control({position: 'bottomright'});
+                        usoSolo2011Legend.onAdd = function (map) {
+                            const div = L.DomUtil.create('div', 'info legend');
+                            div.innerHTML += '<h4>Uso do Solo - 2011</h4>';
+                            usoSolo2011Data.forEach(item => {
+                                div.innerHTML += 
+                                    '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
+                                    item.name + '<br>';
+                            });
+                            return div;
+                        };
+                        usoSolo2011Legend.addTo(map);
+                    }
                 } catch (error) {
-                    console.error("Erro ao carregar a camada de Uso do Solo 2011:", error);
+                    console.error("Erro ao carregar as camadas de Uso do Solo 2011:", error);
                 }
             }
         }
@@ -716,7 +748,7 @@
                     verdesLayer = L.layerGroup();
 
                     const vegetationLayersData = [
-                        { // Camada de polígonos de vegetação
+                        {
                             url: vegetacaoJsonUrl,
                             options: {
                                 pane: 'vegetationPane',
@@ -724,7 +756,7 @@
                                 onEachFeature: (feature, layer) => { layer.bindPopup("Área de Vegetação"); }
                             }
                         },
-                        { // Camada de polígonos de jardins
+                        {
                             url: vegetacaoJardJsonUrl,
                             options: {
                                 pane: 'vegetationPane',
@@ -732,7 +764,7 @@
                                 onEachFeature: (feature, layer) => { layer.bindPopup("Jardim"); }
                             }
                         },
-                        { // Camada de pontos de árvores
+                        {
                             url: vegetacaoArvoresJsonUrl,
                             options: {
                                 pane: 'vegetationPane',
