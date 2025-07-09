@@ -120,7 +120,7 @@
 <body class="antialiased">
 
     <header class="hero-image-container text-white">
-        <img id="hero-bg-1" src="https://placehold.co/1920x1080/44403c/ffffff?text=Foto+de+um+casarão+antigo+na+Barra" class="hero-image" alt="Casarão antigo na Barra">
+        <img id="hero-bg-1" src="https://xxncsxx.github.io/barraparaquem.com.br/Fotos_visita_deriva/DSC06323.JPG" class="hero-image" alt="Casarão antigo na Barra">
         <img id="hero-bg-2" src="https://placehold.co/1920x1080/a1a1aa/ffffff?text=Prédio+moderno+e+verticalizado" class="hero-image opacity-0" alt="Prédio moderno e espelhado">
         
         <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-center p-4">
@@ -226,9 +226,10 @@
                     
                     <div class="mt-6 flex flex-wrap justify-center gap-4">
                         <button onclick="togglePrediosLayer()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors">Novos Empreendimentos</button>
-                        <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirDNA</button>
+                        <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirBNBs</button>
                         <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
                         <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos ABN - 2008</button>
+                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso solo 2011</button>
                         <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes - 2019</button>
                         <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área de Projetos FMLF</button>
                     </div>
@@ -414,6 +415,7 @@
         let gabaritos2008LayerGroup = null;
         let airDnaLayer = null;
         let projetosFmlfLayer = null;
+        let usoSolo2011Layer = null; // Nova variável de camada
         let gabaritosLegend = null;
         let gabaritos2008Legend = null;
         let prediosLegend = null;
@@ -675,6 +677,32 @@
                     }
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de gabaritos 2008:", error);
+                }
+            }
+        }
+
+        async function toggleUsoSolo2011Layer() {
+            if (usoSolo2011Layer && map.hasLayer(usoSolo2011Layer)) {
+                map.removeLayer(usoSolo2011Layer);
+                usoSolo2011Layer = null;
+            } else {
+                try {
+                    const usoSolo2011Url = 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/SAUDE_2011.geojson';
+                    usoSolo2011Layer = await loadGeoJsonLayer(usoSolo2011Url, {
+                        pane: 'gabaritosPane', // Reutilizando um painel existente para o z-index
+                        style: (feature) => ({
+                            color: "#c026d3", // Cor fúcsia
+                            weight: 1,
+                            fillColor: "#c026d3",
+                            fillOpacity: 0.6
+                        }),
+                        onEachFeature: (feature, layer) => {
+                            layer.bindPopup("Uso do Solo (2011): Saúde");
+                        }
+                    });
+                    usoSolo2011Layer.addTo(map);
+                } catch (error) {
+                    console.error("Erro ao carregar a camada de Uso do Solo 2011:", error);
                 }
             }
         }
