@@ -18,6 +18,137 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     
+    <!-- Scripts do Firebase -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, Timestamp, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBTXc-j0XmjB-KsZCxUCXNBz7j3N5cNxoE",
+          authDomain: "barra-em-transformacao-site.firebaseapp.com",
+          projectId: "barra-em-transformacao-site",
+          storageBucket: "barra-em-transformacao-site.appspot.com",
+          messagingSenderId: "702020201437",
+          appId: "1:702020201437:web:630d394dbc73762b1f2434",
+          measurementId: "G-8Q4E7FZSXS"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Lógica dos Comentários
+        const commentForm = document.getElementById('comment-form');
+        const commentsList = document.getElementById('comments-list');
+
+        // Função para apagar um comentário
+        const deleteComment = async (id) => {
+            try {
+                const commentDocRef = doc(db, "comentarios", id);
+                await deleteDoc(commentDocRef);
+                // O 'onSnapshot' irá atualizar a lista automaticamente.
+            } catch (error) {
+                console.error("Erro ao apagar comentário: ", error);
+                alert("Ocorreu um erro ao apagar o comentário.");
+            }
+        };
+        
+        // Função para carregar e exibir os comentários em tempo real
+        const loadComments = () => {
+            const commentsRef = collection(db, "comentarios");
+            const q = query(commentsRef);
+
+            onSnapshot(q, (querySnapshot) => {
+                commentsList.innerHTML = ''; // Limpa a lista antes de adicionar os novos comentários
+                const comments = [];
+                querySnapshot.forEach((doc) => {
+                    comments.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Ordena os comentários por data (mais recentes primeiro) no lado do cliente
+                comments.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+
+                if (comments.length === 0) {
+                    commentsList.innerHTML = '<p class="text-gray-500">Ainda não há comentários. Seja o primeiro a opinar!</p>';
+                } else {
+                    comments.forEach(comment => {
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'p-6 border rounded-lg bg-white shadow fade-in-element visible';
+                        
+                        const date = comment.createdAt.toDate().toLocaleDateString('pt-BR', {
+                            day: '2-digit', month: 'long', year: 'numeric'
+                        });
+
+                        // Adiciona o botão de apagar
+                        commentElement.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-gray-800">"${comment.comentario}"</p>
+                                    <p class="text-sm text-gray-500 mt-3">- <strong>${comment.nome}</strong>, ${comment.tipo_usuario} <span class="mx-2">|</span> ${date}</p>
+                                </div>
+                                <button data-id="${comment.id}" class="delete-comment-btn text-red-500 hover:text-red-700 text-2xl font-bold leading-none p-1">&times;</button>
+                            </div>
+                        `;
+                        commentsList.appendChild(commentElement);
+                    });
+                }
+            });
+        };
+
+        // Event listener para o envio do formulário
+        commentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nome = commentForm.nome.value;
+            const tipo_usuario = commentForm.tipo_usuario.value;
+            const comentario = commentForm.comentario.value;
+            const submitButton = commentForm.querySelector('button[type="submit"]');
+
+            submitButton.disabled = true;
+            submitButton.innerText = 'Enviando...';
+
+            try {
+                await addDoc(collection(db, "comentarios"), {
+                    nome: nome,
+                    tipo_usuario: tipo_usuario,
+                    comentario: comentario,
+                    createdAt: Timestamp.now()
+                });
+                commentForm.reset();
+            } catch (error) {
+                console.error("Erro ao adicionar comentário: ", error);
+                alert("Ocorreu um erro ao enviar seu comentário. Tente novamente.");
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerText = 'Enviar Comentário';
+            }
+        });
+
+        // Event listener para os botões de apagar (usando delegação de eventos)
+        commentsList.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('delete-comment-btn')) {
+                const id = e.target.dataset.id;
+                // ATENÇÃO: Este é um método de segurança simples apenas para demonstração.
+                const password = prompt("Para apagar, digite a senha de administrador:");
+                
+                if (password === "admin123") { // Senha de demonstração. Altere se desejar.
+                    if(confirm("Tem certeza que deseja apagar este comentário? Esta ação não pode ser desfeita.")) {
+                        deleteComment(id);
+                    }
+                } else if (password !== null) { // Se o usuário digitou algo e não apenas cancelou
+                    alert("Senha incorreta.");
+                }
+            }
+        });
+
+        // Carrega os comentários quando a página é carregada
+        loadComments();
+
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -226,15 +357,13 @@
                     
                     <div class="mt-6 flex flex-wrap justify-center gap-4">
                         <button onclick="togglePrediosLayer()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors">Novos Empreendimentos</button>
-                        <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">Levantamento dos AirBNBs</button>
-                        <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos (PDDU 2008)</button>
-                        <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos (PDDU 2016)</button>
-                        <button onclick="toggleGabaritos2011Layer()" class="px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition-colors">Levantamento de gabaritos (2011)</button>
-                        <button onclick="toggleGabaritos2024Layer()" class="px-6 py-2 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors">Levantamento de gabaritos (2024)</button>
-                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do solo (2011)</button>
-                        <button onclick="toggleUsoSolo2024Layer()" class="px-6 py-2 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do solo (2024)</button>
-                        <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes (2019)</button>
-                        <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área revitalizadas (2021)</button>
+                        <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirBNBs</button>
+                        <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
+                        <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos ABN - 2008</button>
+                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do Solo - 2011</button>
+                        <button onclick="toggleUsoSolo2024Layer()" class="px-6 py-2 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do Solo - 2024</button>
+                        <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes - 2019</button>
+                        <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área de Projetos FMLF</button>
                     </div>
                 </div>
             </div>
@@ -260,17 +389,28 @@
             </div>
         </section>
 
+        <!-- SEÇÃO DE COMENTÁRIOS COM FIREBASE -->
         <section class="py-20 bg-white">
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 fade-in-element">Deixe sua Opinião</h2>
                 <div class="max-w-2xl mx-auto">
                     <div class="mb-12 p-8 bg-gray-50 rounded-lg shadow-lg fade-in-element">
                         <h3 class="text-2xl font-bold mb-4">Escreva seu comentário</h3>
-                        <form onsubmit="alert('Funcionalidade de comentário não implementada. É necessário um serviço de backend como o Disqus.'); return false;">
+                        <form id="comment-form">
                             <div class="mb-4">
                                 <label for="nome" class="block text-gray-700 text-sm font-bold mb-2">Nome:</label>
                                 <input type="text" id="nome" name="nome" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                             </div>
+
+                            <div class="mb-4">
+                                <label for="tipo_usuario" class="block text-gray-700 text-sm font-bold mb-2">Eu sou:</label>
+                                <select id="tipo_usuario" name="tipo_usuario" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                    <option>Morador</option>
+                                    <option>Visitante</option>
+                                    <option>Trabalhador</option>
+                                </select>
+                            </div>
+
                             <div class="mb-6">
                                 <label for="comentario" class="block text-gray-700 text-sm font-bold mb-2">Comentário:</label>
                                 <textarea id="comentario" name="comentario" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
@@ -283,16 +423,14 @@
                         </form>
                     </div>
 
-                    <h3 class="text-2xl font-bold mb-6 fade-in-element">Comentários Recentes</h3>
-                    <div class="space-y-6">
-                        <div class="p-6 border rounded-lg bg-white shadow fade-in-element">
-                            <p class="text-gray-800">"Ótima iniciativa! É muito importante visualizar essas mudanças para entendermos o que está acontecendo com nosso bairro."</p>
-                            <p class="text-sm text-gray-500 mt-3">- Ana Lúcia, moradora há 30 anos</p>
-                        </div>
-                        <div class="p-6 border rounded-lg bg-white shadow fade-in-element" style="transition-delay: 200ms;">
-                            <p class="text-gray-800">"Fico triste em ver as casas antigas sumindo. O mapa ajuda a mostrar o tamanho do impacto."</p>
-                            <p class="text-sm text-gray-500 mt-3">- Carlos, comerciante</p>
-                        </div>
+                    <h3 class="text-2xl font-bold mb-6 fade-in-element">Comentários</h3>
+                    <!-- Os comentários serão carregados aqui pelo Firebase -->
+                    <div id="comments-list" class="space-y-6">
+                        <!-- Exemplo de como um comentário será exibido -->
+                        <!-- <div class="p-6 border rounded-lg bg-white shadow">
+                            <p class="text-gray-800">"Este é um comentário de exemplo."</p>
+                            <p class="text-sm text-gray-500 mt-3">- <strong>Nome do Autor</strong>, Tipo de Usuário</p>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -307,7 +445,7 @@
                         <li><strong>Dados Numéricos (Anúncios, Rentabilidade):</strong> Baseados em análises e dados compilados no âmbito do estudo "Percepções da Barra" (FAUFBA).</li>
                         <li><strong>Novos Empreendimentos:</strong> Mapeamento próprio realizado entre 2023 e 2024, com base em levantamentos de campo e informações de mercado.</li>
                         <li><strong>Dados de Locação por Temporada (AirDNA):</strong> Dados adquiridos da plataforma AirDNA, especialista em análise de mercado de aluguel de curta duração.</li>
-                        <li><strong>Gabaritos (2008, 2011, 2016, 2024) e Limite de Bairro:</strong> Geodados disponibilizados pela Prefeitura Municipal de Salvador, através da Secretaria de Desenvolvimento Urbano (SEDUR).</li>
+                        <li><strong>Gabaritos (2008 e 2016) e Limite de Bairro:</strong> Geodados disponibilizados pela Prefeitura Municipal de Salvador, através da Secretaria de Desenvolvimento Urbano (SEDUR).</li>
                         <li><strong>Uso do Solo (2011 e 2024):</strong> Mapeamento de uso e ocupação do solo disponibilizados pela SEDUR.</li>
                         <li><strong>Áreas Verdes - 2019:</strong> Mapeamento de vegetação urbana fornecido pela Secretaria de Sustentabilidade e Resiliência (SECIS) de Salvador.</li>
                         <li><strong>Área de Projetos FMLF:</strong> Poligonal referente à área de atuação de projetos da Fundação Mário Leal Ferreira (FMLF).</li>
@@ -401,57 +539,15 @@
 
         // URLs e estilos para a camada de Gabaritos 2008
         const gabaritos2008LayersData = [
-            { name: '12 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_12m.geojson', style: { color: '#ffff00', fillColor: '#ffff00', fillOpacity: 0.8, weight: 1 } },
-            { name: '15 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_15m.geojson', style: { color: '#ff7040', fillColor: '#ff7040', fillOpacity: 0.8, weight: 1 } },
-            { name: '18 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_18m.geojson', style: { color: '#ffd040', fillColor: '#ffd040', fillOpacity: 0.8, weight: 1 } },
-            { name: '24 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_24m.geojson', style: { color: '#ffb8a0', fillColor: '#ffb8a0', fillOpacity: 0.8, weight: 1 } },
-            { name: '36 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_36m.geojson', style: { color: '#ff80c0', fillColor: '#ff80c0', fillOpacity: 0.8, weight: 1 } },
-            { name: '45 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_45m.geojson', style: { color: '#a0a0ff', fillColor: '#a0a0ff', fillOpacity: 0.8, weight: 1 } },
-            { name: '6 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_6m.geojson', style: { color: '#a0ffa0', fillColor: '#a0ffa0', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 12m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_12m.geojson', style: { color: '#ffff00', fillColor: '#ffff00', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 15m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_15m.geojson', style: { color: '#ff7040', fillColor: '#ff7040', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 18m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_18m.geojson', style: { color: '#ffd040', fillColor: '#ffd040', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 24m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_24m.geojson', style: { color: '#ffb8a0', fillColor: '#ffb8a0', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 36m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_36m.geojson', style: { color: '#ff80c0', fillColor: '#ff80c0', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 45m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_45m.geojson', style: { color: '#a0a0ff', fillColor: '#a0a0ff', fillOpacity: 0.8, weight: 1 } },
+            { name: 'Faixa 6m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_6m.geojson', style: { color: '#a0ffa0', fillColor: '#a0ffa0', fillOpacity: 0.8, weight: 1 } },
             { name: 'Praias', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_praias.geojson', style: { color: '#b0ffff', fillColor: '#b0ffff', fillOpacity: 0.8, weight: 1 } },
             { name: 'Preservação', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_preservacao.geojson', style: { color: '#009090', fillColor: '#009090', fillOpacity: 0.8, weight: 1 } }
-        ];
-
-        // Dados para Gabaritos ABN 2011
-        const gabaritosAbn2011Data = [
-            { name: '0 - 5m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_0-5m.geojson', color: '#faebdd' },
-            { name: '5 - 10m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_5-10m.geojson', color: '#f7c4a4' },
-            { name: '10 - 15m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_10-15m.geojson', color: '#f69b71' },
-            { name: '15 - 20m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_15-20m.geojson', color: '#f26f4c' },
-            { name: '20 - 25m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_20-25m.geojson', color: '#e73d3f' },
-            { name: '25 - 30m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_25-30m.geojson', color: '#ca1a50' },
-            { name: '30 - 35m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_30-35m.geojson', color: '#982f68' },
-            { name: '35 - 40m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_35-40m.geojson', color: '#753771' },
-            { name: '40 - 45m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_40-45m.geojson', color: '#5c3071' },
-            { name: '45 - 55m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_45-55m.geojson', color: '#391e5b' }
-        ];
-
-        // Dados para Gabaritos ABN 2024
-        const gabaritosAbn2024Data = [
-            { name: '0 - 5m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_0-5m.geojson', color: '#faebdd' },
-            { name: '5 - 10m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_5-10m.geojson', color: '#f7c4a4' },
-            { name: '10 - 15m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_10-15m.geojson', color: '#f69b71' },
-            { name: '15 - 20m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_15-20m.geojson', color: '#f26f4c' },
-            { name: '20 - 25m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_20-25m.geojson', color: '#e73d3f' },
-            { name: '25 - 30m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_25-30m.geojson', color: '#ca1a50' },
-            { name: '30 - 35m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_30-35m.geojson', color: '#982f68' },
-            { name: '35 - 40m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_35-40m.geojson', color: '#753771' },
-            { name: '40 - 45m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_40-45m.geojson', color: '#5c3071' },
-            { name: '45 - 50m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_45-50m.geojson', color: '#4e2c68' },
-            { name: '50 - 55m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_50-55m.geojson', color: '#391e5b' },
-            { name: '55 - 60m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_55-60m.geojson', color: '#2f1940' },
-            { name: '> 60m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_maior-que-60m.geojson', color: '#100e2b' }
-        ];
-
-        // Dados para a legenda unificada dos Gabaritos ABN
-        const gabaritosAbnLegendData = [
-            { name: '0 - 5m', color: '#faebdd' }, { name: '5 - 10m', color: '#f7c4a4' },
-            { name: '10 - 15m', color: '#f69b71' }, { name: '15 - 20m', color: '#f26f4c' },
-            { name: '20 - 25m', color: '#e73d3f' }, { name: '25 - 30m', color: '#ca1a50' },
-            { name: '30 - 35m', color: '#982f68' }, { name: '35 - 40m', color: '#753771' },
-            { name: '40 - 45m', color: '#5c3071' }, { name: '45 - 50m', color: '#4e2c68' },
-            { name: '50 - 55m', color: '#391e5b' }, { name: '55 - 60m', color: '#2f1940' },
-            { name: '> 60m', color: '#100e2b' }
         ];
         
         // Dados e estilos unificados para as camadas de Uso do Solo
@@ -473,16 +569,13 @@
         let verdesLayer = null;
         let gabaritosLayerGroup = null; 
         let gabaritos2008LayerGroup = null;
-        let gabaritosAbn2011LayerGroup = null;
-        let gabaritosAbn2024LayerGroup = null;
         let airDnaLayer = null;
         let projetosFmlfLayer = null;
         let usoSolo2011LayerGroup = null;
         let usoSolo2024LayerGroup = null;
         let gabaritosLegend = null;
         let gabaritos2008Legend = null;
-        let gabaritosAbnLegend = null;
-        let usoSoloLegend = null;
+        let usoSoloLegend = null; // Legenda unificada
         let prediosLegend = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -677,7 +770,7 @@
                         gabaritosLegend = L.control({position: 'bottomright'});
                         gabaritosLegend.onAdd = function (map) {
                             const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>Gabaritos (PDDU 2016)</h4>';
+                            div.innerHTML += '<h4>LEGENDA GABARITOS 2016</h4>';
                             gabaritosLayersData.forEach(item => {
                                 div.innerHTML += 
                                     '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
@@ -721,7 +814,7 @@
                         gabaritos2008Legend = L.control({position: 'bottomright'});
                         gabaritos2008Legend.onAdd = function (map) {
                             const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>Gabaritos (PDDU 2008)</h4>';
+                            div.innerHTML += '<h4>LEGENDA GABARITOS 2008</h4>';
                             gabaritos2008LayersData.forEach(item => {
                                 div.innerHTML += 
                                     '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
@@ -737,86 +830,19 @@
             }
         }
 
-        async function toggleGabaritos2011Layer() {
-            if (gabaritosAbn2011LayerGroup) {
-                map.removeLayer(gabaritosAbn2011LayerGroup);
-                gabaritosAbn2011LayerGroup = null;
-            } else {
-                try {
-                    gabaritosAbn2011LayerGroup = L.layerGroup();
-                    const promises = gabaritosAbn2011Data.map(data => 
-                        loadGeoJsonLayer(data.url, {
-                            pane: 'gabaritosPane',
-                            style: { color: data.color, fillColor: data.color, fillOpacity: 0.8, weight: 1 }
-                        })
-                    );
-                    const loadedLayers = await Promise.all(promises);
-                    loadedLayers.forEach(layer => gabaritosAbn2011LayerGroup.addLayer(layer));
-                    gabaritosAbn2011LayerGroup.addTo(map);
-                } catch (error) {
-                    console.error("Erro ao carregar camadas de Gabaritos ABN 2011:", error);
-                }
-            }
-            updateGabaritosAbnLegend();
-        }
-
-        async function toggleGabaritos2024Layer() {
-            if (gabaritosAbn2024LayerGroup) {
-                map.removeLayer(gabaritosAbn2024LayerGroup);
-                gabaritosAbn2024LayerGroup = null;
-            } else {
-                try {
-                    gabaritosAbn2024LayerGroup = L.layerGroup();
-                    const promises = gabaritosAbn2024Data.map(data => 
-                        loadGeoJsonLayer(data.url, {
-                            pane: 'gabaritosPane',
-                            style: { color: data.color, fillColor: data.color, fillOpacity: 0.8, weight: 1 }
-                        })
-                    );
-                    const loadedLayers = await Promise.all(promises);
-                    loadedLayers.forEach(layer => gabaritosAbn2024LayerGroup.addLayer(layer));
-                    gabaritosAbn2024LayerGroup.addTo(map);
-                } catch (error) {
-                    console.error("Erro ao carregar camadas de Gabaritos ABN 2024:", error);
-                }
-            }
-            updateGabaritosAbnLegend();
-        }
-
-        function updateGabaritosAbnLegend() {
-            const is2011Active = !!gabaritosAbn2011LayerGroup;
-            const is2024Active = !!gabaritosAbn2024LayerGroup;
-
-            if (!is2011Active && !is2024Active) {
-                if (gabaritosAbnLegend) {
-                    map.removeControl(gabaritosAbnLegend);
-                    gabaritosAbnLegend = null;
-                }
-                return;
-            }
-
-            if (!gabaritosAbnLegend) {
-                gabaritosAbnLegend = L.control({position: 'bottomright'});
-                gabaritosAbnLegend.onAdd = function(map) {
-                    const div = L.DomUtil.create('div', 'info legend');
-                    div.innerHTML += '<h4>Levantamento de gabaritos (m)</h4>';
-                    gabaritosAbnLegendData.forEach(item => {
-                        div.innerHTML += `<i style="background:${item.color}; opacity: 0.8;"></i> ${item.name}<br>`;
-                    });
-                    return div;
-                };
-                gabaritosAbnLegend.addTo(map);
-            }
-        }
-
         async function toggleUsoSolo2011Layer() {
-            if (usoSolo2011LayerGroup) {
+            if (usoSolo2011LayerGroup && map.hasLayer(usoSolo2011LayerGroup)) {
                 map.removeLayer(usoSolo2011LayerGroup);
                 usoSolo2011LayerGroup = null;
+                if (!usoSolo2024LayerGroup && usoSoloLegend) {
+                    map.removeControl(usoSoloLegend);
+                    usoSoloLegend = null;
+                }
             } else {
                 try {
                     usoSolo2011LayerGroup = L.layerGroup();
-                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do solo (2011): ${layerName}`);
+                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2011): ${layerName}`);
+
                     const promises = usoSoloData.map(data => 
                         loadGeoJsonLayer(data.url_2011, {
                             pane: 'gabaritosPane',
@@ -827,21 +853,38 @@
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => usoSolo2011LayerGroup.addLayer(layer));
                     usoSolo2011LayerGroup.addTo(map);
+
+                    if (!usoSoloLegend) {
+                        usoSoloLegend = L.control({position: 'bottomright'});
+                        usoSoloLegend.onAdd = function (map) {
+                            const div = L.DomUtil.create('div', 'info legend');
+                            div.innerHTML += '<h4>Uso do Solo</h4>';
+                            usoSoloData.forEach(item => {
+                                div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
+                            });
+                            return div;
+                        };
+                        usoSoloLegend.addTo(map);
+                    }
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de Uso do Solo 2011:", error);
                 }
             }
-            updateUsoSoloLegend();
         }
 
         async function toggleUsoSolo2024Layer() {
-            if (usoSolo2024LayerGroup) {
+            if (usoSolo2024LayerGroup && map.hasLayer(usoSolo2024LayerGroup)) {
                 map.removeLayer(usoSolo2024LayerGroup);
                 usoSolo2024LayerGroup = null;
+                if (!usoSolo2011LayerGroup && usoSoloLegend) {
+                    map.removeControl(usoSoloLegend);
+                    usoSoloLegend = null;
+                }
             } else {
                 try {
                     usoSolo2024LayerGroup = L.layerGroup();
-                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do solo (2024): ${layerName}`);
+                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2024): ${layerName}`);
+
                     const promises = usoSoloData.map(data => 
                         loadGeoJsonLayer(data.url_2024, {
                             pane: 'gabaritosPane',
@@ -852,36 +895,22 @@
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => usoSolo2024LayerGroup.addLayer(layer));
                     usoSolo2024LayerGroup.addTo(map);
+
+                    if (!usoSoloLegend) {
+                        usoSoloLegend = L.control({position: 'bottomright'});
+                        usoSoloLegend.onAdd = function (map) {
+                            const div = L.DomUtil.create('div', 'info legend');
+                            div.innerHTML += '<h4>Uso do Solo</h4>';
+                            usoSoloData.forEach(item => {
+                                div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
+                            });
+                            return div;
+                        };
+                        usoSoloLegend.addTo(map);
+                    }
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de Uso do Solo 2024:", error);
                 }
-            }
-            updateUsoSoloLegend();
-        }
-
-        function updateUsoSoloLegend() {
-            const is2011Active = !!usoSolo2011LayerGroup;
-            const is2024Active = !!usoSolo2024LayerGroup;
-
-            if (!is2011Active && !is2024Active) {
-                if (usoSoloLegend) {
-                    map.removeControl(usoSoloLegend);
-                    usoSoloLegend = null;
-                }
-                return;
-            }
-            
-            if (!usoSoloLegend) {
-                usoSoloLegend = L.control({position: 'bottomright'});
-                usoSoloLegend.onAdd = function (map) {
-                    const div = L.DomUtil.create('div', 'info legend');
-                    div.innerHTML += '<h4>Uso do solo</h4>';
-                    usoSoloData.forEach(item => {
-                        div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
-                    });
-                    return div;
-                };
-                usoSoloLegend.addTo(map);
             }
         }
 
@@ -892,14 +921,46 @@
             } else {
                 try {
                     verdesLayer = L.layerGroup();
+
                     const vegetationLayersData = [
-                        { url: vegetacaoJsonUrl, options: { pane: 'vegetationPane', style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }), onEachFeature: (f, l) => l.bindPopup("Área de Vegetação") } },
-                        { url: vegetacaoJardJsonUrl, options: { pane: 'vegetationPane', style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }), onEachFeature: (f, l) => l.bindPopup("Jardim") } },
-                        { url: vegetacaoArvoresJsonUrl, options: { pane: 'vegetationPane', pointToLayer: (f, latlng) => L.marker(latlng, { icon: L.divIcon({ html: '🌳', className: 'custom-tree-icon', iconSize: [20, 20] }) }), onEachFeature: (f, l) => l.bindPopup("Árvore") } }
+                        {
+                            url: vegetacaoJsonUrl,
+                            options: {
+                                pane: 'vegetationPane',
+                                style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }),
+                                onEachFeature: (feature, layer) => { layer.bindPopup("Área de Vegetação"); }
+                            }
+                        },
+                        {
+                            url: vegetacaoJardJsonUrl,
+                            options: {
+                                pane: 'vegetationPane',
+                                style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }),
+                                onEachFeature: (feature, layer) => { layer.bindPopup("Jardim"); }
+                            }
+                        },
+                        {
+                            url: vegetacaoArvoresJsonUrl,
+                            options: {
+                                pane: 'vegetationPane',
+                                pointToLayer: (feature, latlng) => {
+                                    const treeIcon = L.divIcon({
+                                        html: '🌳',
+                                        className: 'custom-tree-icon',
+                                        iconSize: [20, 20]
+                                    });
+                                    return L.marker(latlng, { icon: treeIcon });
+                                },
+                                onEachFeature: (feature, layer) => { layer.bindPopup("Árvore"); }
+                            }
+                        }
                     ];
+
                     const promises = vegetationLayersData.map(data => loadGeoJsonLayer(data.url, data.options));
+
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => verdesLayer.addLayer(layer));
+                    
                     verdesLayer.addTo(map);
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de vegetação:", error);
@@ -915,8 +976,15 @@
                 try {
                     projetosFmlfLayer = await loadGeoJsonLayer(projetosFmlfUrl, {
                         pane: 'projetosPane',
-                        style: (feature) => ({ color: "#d53cd4", weight: 0, fillColor: "#d53cd4", fillOpacity: 0.4 }),
-                        onEachFeature: (feature, layer) => { layer.bindPopup("Área revitalizadas (2021)"); }
+                        style: (feature) => ({
+                            color: "#d53cd4",
+                            weight: 0,
+                            fillColor: "#d53cd4",
+                            fillOpacity: 0.4
+                        }),
+                        onEachFeature: (feature, layer) => {
+                            layer.bindPopup("Área de Projetos FMLF");
+                        }
                     });
                     projetosFmlfLayer.addTo(map);
                 } catch (error) {
