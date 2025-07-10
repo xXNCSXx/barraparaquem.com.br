@@ -226,15 +226,15 @@
                     
                     <div class="mt-6 flex flex-wrap justify-center gap-4">
                         <button onclick="togglePrediosLayer()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors">Novos Empreendimentos</button>
-                        <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirBNBs</button>
-                        <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos ABN - 2008</button>
-                        <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
-                        <button onclick="toggleGabaritos2011Layer()" class="px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition-colors">Gabaritos ABN - 2011</button>
-                        <button onclick="toggleGabaritos2024Layer()" class="px-6 py-2 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors">Gabaritos ABN - 2024</button>
-                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do Solo - 2011</button>
-                        <button onclick="toggleUsoSolo2024Layer()" class="px-6 py-2 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do Solo - 2024</button>
-                        <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes - 2019</button>
-                        <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área de Projetos FMLF</button>
+                        <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">Levantamento dos AirBNBs</button>
+                        <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos (PDDU 2008)</button>
+                        <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos (PDDU 2016)</button>
+                        <button onclick="toggleGabaritos2011Layer()" class="px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition-colors">Levantamento de gabaritos (2011)</button>
+                        <button onclick="toggleGabaritos2024Layer()" class="px-6 py-2 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors">Levantamento de gabaritos (2024)</button>
+                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do solo (2011)</button>
+                        <button onclick="toggleUsoSolo2024Layer()" class="px-6 py-2 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do solo (2024)</button>
+                        <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes (2019)</button>
+                        <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área revitalizadas (2021)</button>
                     </div>
                 </div>
             </div>
@@ -401,13 +401,13 @@
 
         // URLs e estilos para a camada de Gabaritos 2008
         const gabaritos2008LayersData = [
-            { name: 'Faixa 12m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_12m.geojson', style: { color: '#ffff00', fillColor: '#ffff00', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Faixa 15m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_15m.geojson', style: { color: '#ff7040', fillColor: '#ff7040', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Faixa 18m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_18m.geojson', style: { color: '#ffd040', fillColor: '#ffd040', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Faixa 24m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_24m.geojson', style: { color: '#ffb8a0', fillColor: '#ffb8a0', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Faixa 36m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_36m.geojson', style: { color: '#ff80c0', fillColor: '#ff80c0', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Faixa 45m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_45m.geojson', style: { color: '#a0a0ff', fillColor: '#a0a0ff', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Faixa 6m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_6m.geojson', style: { color: '#a0ffa0', fillColor: '#a0ffa0', fillOpacity: 0.8, weight: 1 } },
+            { name: '12 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_12m.geojson', style: { color: '#ffff00', fillColor: '#ffff00', fillOpacity: 0.8, weight: 1 } },
+            { name: '15 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_15m.geojson', style: { color: '#ff7040', fillColor: '#ff7040', fillOpacity: 0.8, weight: 1 } },
+            { name: '18 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_18m.geojson', style: { color: '#ffd040', fillColor: '#ffd040', fillOpacity: 0.8, weight: 1 } },
+            { name: '24 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_24m.geojson', style: { color: '#ffb8a0', fillColor: '#ffb8a0', fillOpacity: 0.8, weight: 1 } },
+            { name: '36 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_36m.geojson', style: { color: '#ff80c0', fillColor: '#ff80c0', fillOpacity: 0.8, weight: 1 } },
+            { name: '45 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_45m.geojson', style: { color: '#a0a0ff', fillColor: '#a0a0ff', fillOpacity: 0.8, weight: 1 } },
+            { name: '6 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_6m.geojson', style: { color: '#a0ffa0', fillColor: '#a0ffa0', fillOpacity: 0.8, weight: 1 } },
             { name: 'Praias', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_praias.geojson', style: { color: '#b0ffff', fillColor: '#b0ffff', fillOpacity: 0.8, weight: 1 } },
             { name: 'Preservação', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_preservacao.geojson', style: { color: '#009090', fillColor: '#009090', fillOpacity: 0.8, weight: 1 } }
         ];
@@ -677,7 +677,7 @@
                         gabaritosLegend = L.control({position: 'bottomright'});
                         gabaritosLegend.onAdd = function (map) {
                             const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>LEGENDA GABARITOS 2016</h4>';
+                            div.innerHTML += '<h4>Gabaritos (PDDU 2016)</h4>';
                             gabaritosLayersData.forEach(item => {
                                 div.innerHTML += 
                                     '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
@@ -721,7 +721,7 @@
                         gabaritos2008Legend = L.control({position: 'bottomright'});
                         gabaritos2008Legend.onAdd = function (map) {
                             const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>LEGENDA GABARITOS 2008</h4>';
+                            div.innerHTML += '<h4>Gabaritos (PDDU 2008)</h4>';
                             gabaritos2008LayersData.forEach(item => {
                                 div.innerHTML += 
                                     '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
@@ -799,7 +799,7 @@
                 gabaritosAbnLegend = L.control({position: 'bottomright'});
                 gabaritosAbnLegend.onAdd = function(map) {
                     const div = L.DomUtil.create('div', 'info legend');
-                    div.innerHTML += '<h4>Gabaritos ABN (m)</h4>';
+                    div.innerHTML += '<h4>Levantamento de gabaritos (m)</h4>';
                     gabaritosAbnLegendData.forEach(item => {
                         div.innerHTML += `<i style="background:${item.color}; opacity: 0.8;"></i> ${item.name}<br>`;
                     });
@@ -816,7 +816,7 @@
             } else {
                 try {
                     usoSolo2011LayerGroup = L.layerGroup();
-                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2011): ${layerName}`);
+                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do solo (2011): ${layerName}`);
                     const promises = usoSoloData.map(data => 
                         loadGeoJsonLayer(data.url_2011, {
                             pane: 'gabaritosPane',
@@ -841,7 +841,7 @@
             } else {
                 try {
                     usoSolo2024LayerGroup = L.layerGroup();
-                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2024): ${layerName}`);
+                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do solo (2024): ${layerName}`);
                     const promises = usoSoloData.map(data => 
                         loadGeoJsonLayer(data.url_2024, {
                             pane: 'gabaritosPane',
@@ -875,7 +875,7 @@
                 usoSoloLegend = L.control({position: 'bottomright'});
                 usoSoloLegend.onAdd = function (map) {
                     const div = L.DomUtil.create('div', 'info legend');
-                    div.innerHTML += '<h4>Uso do Solo</h4>';
+                    div.innerHTML += '<h4>Uso do solo</h4>';
                     usoSoloData.forEach(item => {
                         div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
                     });
@@ -916,7 +916,7 @@
                     projetosFmlfLayer = await loadGeoJsonLayer(projetosFmlfUrl, {
                         pane: 'projetosPane',
                         style: (feature) => ({ color: "#d53cd4", weight: 0, fillColor: "#d53cd4", fillOpacity: 0.4 }),
-                        onEachFeature: (feature, layer) => { layer.bindPopup("Área de Projetos FMLF"); }
+                        onEachFeature: (feature, layer) => { layer.bindPopup("Área revitalizadas (2021)"); }
                     });
                     projetosFmlfLayer.addTo(map);
                 } catch (error) {
