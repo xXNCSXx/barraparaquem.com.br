@@ -121,7 +121,7 @@
 
     <header class="hero-image-container text-white">
         <img id="hero-bg-1" src="https://xxncsxx.github.io/barraparaquem.com.br/Fotos_visita_deriva/DSC06323.JPG" class="hero-image" alt="Casarão antigo na Barra">
-        <img id="hero-bg-2" src="https://xxncsxx.github.io/barraparaquem.com.br/Fotos_visita_deriva/DSC06324.JPG" class="hero-image opacity-0" alt="Prédio moderno e espelhado">
+        <img id="hero-bg-2" src="https://placehold.co/1920x1080/a1a1aa/ffffff?text=Prédio+moderno+e+verticalizado" class="hero-image opacity-0" alt="Prédio moderno e espelhado">
         
         <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-center p-4">
             <div class="fade-in-element">
@@ -229,7 +229,8 @@
                         <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirBNBs</button>
                         <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
                         <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos ABN - 2008</button>
-                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso solo 2011</button>
+                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do Solo - 2011</button>
+                        <button onclick="toggleUsoSolo2024Layer()" class="px-6 py-2 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do Solo - 2024</button>
                         <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes - 2019</button>
                         <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área de Projetos FMLF</button>
                     </div>
@@ -305,6 +306,7 @@
                         <li><strong>Novos Empreendimentos:</strong> Mapeamento próprio realizado entre 2023 e 2024, com base em levantamentos de campo e informações de mercado.</li>
                         <li><strong>Dados de Locação por Temporada (AirDNA):</strong> Dados adquiridos da plataforma AirDNA, especialista em análise de mercado de aluguel de curta duração.</li>
                         <li><strong>Gabaritos (2008 e 2016) e Limite de Bairro:</strong> Geodados disponibilizados pela Prefeitura Municipal de Salvador, através da Secretaria de Desenvolvimento Urbano (SEDUR).</li>
+                        <li><strong>Uso do Solo (2011 e 2024):</strong> Mapeamento de uso e ocupação do solo disponibilizados pela SEDUR.</li>
                         <li><strong>Áreas Verdes - 2019:</strong> Mapeamento de vegetação urbana fornecido pela Secretaria de Sustentabilidade e Resiliência (SECIS) de Salvador.</li>
                         <li><strong>Área de Projetos FMLF:</strong> Poligonal referente à área de atuação de projetos da Fundação Mário Leal Ferreira (FMLF).</li>
                     </ul>
@@ -408,19 +410,18 @@
             { name: 'Preservação', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_preservacao.geojson', style: { color: '#009090', fillColor: '#009090', fillOpacity: 0.8, weight: 1 } }
         ];
         
-        // URLs e estilos para a camada de Uso do Solo 2011
-        const usoSolo2011Data = [
-            
-			{ name: 'Residencial', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/RESIDENCIAL_2011.geojson', style: { color: '#fcce23', fillColor: '#fcce23', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Não Identificado/Abandonado', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/NAO_IDENTIFICADO_ABANDONADO_OU_SEM_USO_2011.geojson', style: { color: '#fca732', fillColor: '#fca732', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Misto (Residencial/Comércio)', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/MISTO_RESIDENCIAL_COMERCIO_EOU_SERVICO_2011.geojson', style: { color: '#f48153', fillColor: '#f48153', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Misto (Hospedagem/Comércio)', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/MISTO_HOSPEDAGEM_COMERCIO_EOU_SERVICO_2011.geojson', style: { color: '#e06462', fillColor: '#e06462', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Institucional', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/INSTITUCIONAL_2011.geojson', style: { color: '#cb4778', fillColor: '#cb4778', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Hospedagem', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/HOSPEDAGEM_2011.geojson', style: { color: '#af2b8c', fillColor: '#af2b8c', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Estacionamento', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/ESTACIONAMENTO_2011.geojson', style: { color: '#910ca5', fillColor: '#910ca5', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Em Obras', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/EM_OBRAS_2011.geojson', style: { color: '#6a01a4', fillColor: '#6a01a4', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Comércio e/ou Serviço', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/COMERCIO_EOU_SERVICO_2011.geojson', style: { color: '#40059b', fillColor: '#40059b', fillOpacity: 0.8, weight: 1 } },
-            { name: 'Saúde', url: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/SAUDE_2011.geojson', style: { color: '#f2f822', fillColor: '#f2f822', fillOpacity: 0.8, weight: 1 } }
+        // Dados e estilos unificados para as camadas de Uso do Solo
+        const usoSoloData = [
+            { name: 'Residencial', style: { color: '#fcce23', fillColor: '#fcce23', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/RESIDENCIAL_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/RESIDENCIAL_2024.geojson' },
+            { name: 'Não Identificado/Abandonado', style: { color: '#fca732', fillColor: '#fca732', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/NAO_IDENTIFICADO_ABANDONADO_OU_SEM_USO_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/NAO_IDENTIFICADO_ABANDONADO_SEM_USO_2024.geojson' },
+            { name: 'Misto (Residencial/Comércio)', style: { color: '#f48153', fillColor: '#f48153', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/MISTO_RESIDENCIAL_COMERCIO_EOU_SERVICO_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/MISTO_RESIDENCIAL_COMERCIO_EOU_SERVICO_2024.geojson' },
+            { name: 'Misto (Hospedagem/Comércio)', style: { color: '#e06462', fillColor: '#e06462', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/MISTO_HOSPEDAGEM_COMERCIO_EOU_SERVICO_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/MISTO_HOSPEDAGEM_COMERCIO_EOU_SERVICO_2024.geojson' },
+            { name: 'Institucional', style: { color: '#cb4778', fillColor: '#cb4778', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/INSTITUCIONAL_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/INSTITUCIONAL_2024.geojson' },
+            { name: 'Hospedagem', style: { color: '#af2b8c', fillColor: '#af2b8c', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/HOSPEDAGEM_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/HOSPEDAGEM_2024.geojson' },
+            { name: 'Estacionamento', style: { color: '#910ca5', fillColor: '#910ca5', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/ESTACIONAMENTO_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/ESTACIONAMENTO_2024.geojson' },
+            { name: 'Em Obras', style: { color: '#6a01a4', fillColor: '#6a01a4', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/EM_OBRAS_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/EM_OBRAS_2024.geojson' },
+            { name: 'Comércio e/ou Serviço', style: { color: '#40059b', fillColor: '#40059b', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/COMERCIO_EOU_SERVICO_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/COMERCIO_EOU_SERVICO_2024.geojson' },
+            { name: 'Saúde', style: { color: '#c026d3', fillColor: '#c026d3', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/SAUDE_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/SAUDE_2024.geojson' }
         ];
 
         let map;
@@ -430,10 +431,11 @@
         let gabaritos2008LayerGroup = null;
         let airDnaLayer = null;
         let projetosFmlfLayer = null;
-        let usoSolo2011LayerGroup = null; // Alterado para LayerGroup
+        let usoSolo2011LayerGroup = null;
+        let usoSolo2024LayerGroup = null;
         let gabaritosLegend = null;
         let gabaritos2008Legend = null;
-        let usoSolo2011Legend = null; // Nova variável de legenda
+        let usoSoloLegend = null; // Legenda unificada
         let prediosLegend = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -692,50 +694,82 @@
             if (usoSolo2011LayerGroup && map.hasLayer(usoSolo2011LayerGroup)) {
                 map.removeLayer(usoSolo2011LayerGroup);
                 usoSolo2011LayerGroup = null;
-                if (usoSolo2011Legend) {
-                    map.removeControl(usoSolo2011Legend);
-                    usoSolo2011Legend = null;
+                if (!usoSolo2024LayerGroup && usoSoloLegend) {
+                    map.removeControl(usoSoloLegend);
+                    usoSoloLegend = null;
                 }
             } else {
                 try {
                     usoSolo2011LayerGroup = L.layerGroup();
-                    
-                    const onEachFeaturePopup = (feature, layer) => {
-                        const layerName = Object.keys(feature.properties)[0];
-                        if (layerName) {
-                            layer.bindPopup(`Uso do Solo (2011): ${layerName}`);
-                        }
-                    };
+                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2011): ${layerName}`);
 
-                    const promises = usoSolo2011Data.map(data => 
-                        loadGeoJsonLayer(data.url, {
+                    const promises = usoSoloData.map(data => 
+                        loadGeoJsonLayer(data.url_2011, {
                             pane: 'gabaritosPane',
                             style: data.style,
-                            onEachFeature: onEachFeaturePopup
+                            onEachFeature: (feature, layer) => onEachFeaturePopup(feature, layer, data.name)
                         })
                     );
-
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => usoSolo2011LayerGroup.addLayer(layer));
-                    
                     usoSolo2011LayerGroup.addTo(map);
-                    
-                    if (!usoSolo2011Legend) {
-                        usoSolo2011Legend = L.control({position: 'bottomright'});
-                        usoSolo2011Legend.onAdd = function (map) {
+
+                    if (!usoSoloLegend) {
+                        usoSoloLegend = L.control({position: 'bottomright'});
+                        usoSoloLegend.onAdd = function (map) {
                             const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>Uso do Solo - 2011</h4>';
-                            usoSolo2011Data.forEach(item => {
-                                div.innerHTML += 
-                                    '<i style="background:' + item.style.fillColor + '; opacity: 0.8;"></i> ' +
-                                    item.name + '<br>';
+                            div.innerHTML += '<h4>Uso do Solo</h4>';
+                            usoSoloData.forEach(item => {
+                                div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
                             });
                             return div;
                         };
-                        usoSolo2011Legend.addTo(map);
+                        usoSoloLegend.addTo(map);
                     }
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de Uso do Solo 2011:", error);
+                }
+            }
+        }
+
+        async function toggleUsoSolo2024Layer() {
+            if (usoSolo2024LayerGroup && map.hasLayer(usoSolo2024LayerGroup)) {
+                map.removeLayer(usoSolo2024LayerGroup);
+                usoSolo2024LayerGroup = null;
+                if (!usoSolo2011LayerGroup && usoSoloLegend) {
+                    map.removeControl(usoSoloLegend);
+                    usoSoloLegend = null;
+                }
+            } else {
+                try {
+                    usoSolo2024LayerGroup = L.layerGroup();
+                    const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2024): ${layerName}`);
+
+                    const promises = usoSoloData.map(data => 
+                        loadGeoJsonLayer(data.url_2024, {
+                            pane: 'gabaritosPane',
+                            style: data.style,
+                            onEachFeature: (feature, layer) => onEachFeaturePopup(feature, layer, data.name)
+                        })
+                    );
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => usoSolo2024LayerGroup.addLayer(layer));
+                    usoSolo2024LayerGroup.addTo(map);
+
+                    if (!usoSoloLegend) {
+                        usoSoloLegend = L.control({position: 'bottomright'});
+                        usoSoloLegend.onAdd = function (map) {
+                            const div = L.DomUtil.create('div', 'info legend');
+                            div.innerHTML += '<h4>Uso do Solo</h4>';
+                            usoSoloData.forEach(item => {
+                                div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
+                            });
+                            return div;
+                        };
+                        usoSoloLegend.addTo(map);
+                    }
+                } catch (error) {
+                    console.error("Erro ao carregar as camadas de Uso do Solo 2024:", error);
                 }
             }
         }
