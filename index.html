@@ -227,8 +227,10 @@
                     <div class="mt-6 flex flex-wrap justify-center gap-4">
                         <button onclick="togglePrediosLayer()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors">Novos Empreendimentos</button>
                         <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">AirBNBs</button>
-                        <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
                         <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos ABN - 2008</button>
+                        <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos ABN - 2016</button>
+                        <button onclick="toggleGabaritos2011Layer()" class="px-6 py-2 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition-colors">Gabaritos ABN - 2011</button>
+                        <button onclick="toggleGabaritos2024Layer()" class="px-6 py-2 bg-sky-600 text-white font-semibold rounded-lg shadow-md hover:bg-sky-700 transition-colors">Gabaritos ABN - 2024</button>
                         <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do Solo - 2011</button>
                         <button onclick="toggleUsoSolo2024Layer()" class="px-6 py-2 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do Solo - 2024</button>
                         <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes - 2019</button>
@@ -305,7 +307,7 @@
                         <li><strong>Dados Numéricos (Anúncios, Rentabilidade):</strong> Baseados em análises e dados compilados no âmbito do estudo "Percepções da Barra" (FAUFBA).</li>
                         <li><strong>Novos Empreendimentos:</strong> Mapeamento próprio realizado entre 2023 e 2024, com base em levantamentos de campo e informações de mercado.</li>
                         <li><strong>Dados de Locação por Temporada (AirDNA):</strong> Dados adquiridos da plataforma AirDNA, especialista em análise de mercado de aluguel de curta duração.</li>
-                        <li><strong>Gabaritos (2008 e 2016) e Limite de Bairro:</strong> Geodados disponibilizados pela Prefeitura Municipal de Salvador, através da Secretaria de Desenvolvimento Urbano (SEDUR).</li>
+                        <li><strong>Gabaritos (2008, 2011, 2016, 2024) e Limite de Bairro:</strong> Geodados disponibilizados pela Prefeitura Municipal de Salvador, através da Secretaria de Desenvolvimento Urbano (SEDUR).</li>
                         <li><strong>Uso do Solo (2011 e 2024):</strong> Mapeamento de uso e ocupação do solo disponibilizados pela SEDUR.</li>
                         <li><strong>Áreas Verdes - 2019:</strong> Mapeamento de vegetação urbana fornecido pela Secretaria de Sustentabilidade e Resiliência (SECIS) de Salvador.</li>
                         <li><strong>Área de Projetos FMLF:</strong> Poligonal referente à área de atuação de projetos da Fundação Mário Leal Ferreira (FMLF).</li>
@@ -409,6 +411,48 @@
             { name: 'Praias', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_praias.geojson', style: { color: '#b0ffff', fillColor: '#b0ffff', fillOpacity: 0.8, weight: 1 } },
             { name: 'Preservação', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_preservacao.geojson', style: { color: '#009090', fillColor: '#009090', fillOpacity: 0.8, weight: 1 } }
         ];
+
+        // Dados para Gabaritos ABN 2011
+        const gabaritosAbn2011Data = [
+            { name: '0 - 5m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_0-5m.geojson', color: '#faebdd' },
+            { name: '5 - 10m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_5-10m.geojson', color: '#f7c4a4' },
+            { name: '10 - 15m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_10-15m.geojson', color: '#f69b71' },
+            { name: '15 - 20m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_15-20m.geojson', color: '#f26f4c' },
+            { name: '20 - 25m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_20-25m.geojson', color: '#e73d3f' },
+            { name: '25 - 30m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_25-30m.geojson', color: '#ca1a50' },
+            { name: '30 - 35m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_30-35m.geojson', color: '#982f68' },
+            { name: '35 - 40m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_35-40m.geojson', color: '#753771' },
+            { name: '40 - 45m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_40-45m.geojson', color: '#5c3071' },
+            { name: '45 - 55m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2011/gab_2011_45-55m.geojson', color: '#391e5b' }
+        ];
+
+        // Dados para Gabaritos ABN 2024
+        const gabaritosAbn2024Data = [
+            { name: '0 - 5m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_0-5m.geojson', color: '#faebdd' },
+            { name: '5 - 10m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_5-10m.geojson', color: '#f7c4a4' },
+            { name: '10 - 15m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_10-15m.geojson', color: '#f69b71' },
+            { name: '15 - 20m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_15-20m.geojson', color: '#f26f4c' },
+            { name: '20 - 25m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_20-25m.geojson', color: '#e73d3f' },
+            { name: '25 - 30m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_25-30m.geojson', color: '#ca1a50' },
+            { name: '30 - 35m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_30-35m.geojson', color: '#982f68' },
+            { name: '35 - 40m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_35-40m.geojson', color: '#753771' },
+            { name: '40 - 45m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_40-45m.geojson', color: '#5c3071' },
+            { name: '45 - 50m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_45-50m.geojson', color: '#4e2c68' },
+            { name: '50 - 55m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_50-55m.geojson', color: '#391e5b' },
+            { name: '55 - 60m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_55-60m.geojson', color: '#2f1940' },
+            { name: '> 60m', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2024/gab_2024_maior-que-60m.geojson', color: '#100e2b' }
+        ];
+
+        // Dados para a legenda unificada dos Gabaritos ABN
+        const gabaritosAbnLegendData = [
+            { name: '0 - 5m', color: '#faebdd' }, { name: '5 - 10m', color: '#f7c4a4' },
+            { name: '10 - 15m', color: '#f69b71' }, { name: '15 - 20m', color: '#f26f4c' },
+            { name: '20 - 25m', color: '#e73d3f' }, { name: '25 - 30m', color: '#ca1a50' },
+            { name: '30 - 35m', color: '#982f68' }, { name: '35 - 40m', color: '#753771' },
+            { name: '40 - 45m', color: '#5c3071' }, { name: '45 - 50m', color: '#4e2c68' },
+            { name: '50 - 55m', color: '#391e5b' }, { name: '55 - 60m', color: '#2f1940' },
+            { name: '> 60m', color: '#100e2b' }
+        ];
         
         // Dados e estilos unificados para as camadas de Uso do Solo
         const usoSoloData = [
@@ -429,13 +473,16 @@
         let verdesLayer = null;
         let gabaritosLayerGroup = null; 
         let gabaritos2008LayerGroup = null;
+        let gabaritosAbn2011LayerGroup = null;
+        let gabaritosAbn2024LayerGroup = null;
         let airDnaLayer = null;
         let projetosFmlfLayer = null;
         let usoSolo2011LayerGroup = null;
         let usoSolo2024LayerGroup = null;
         let gabaritosLegend = null;
         let gabaritos2008Legend = null;
-        let usoSoloLegend = null; // Legenda unificada
+        let gabaritosAbnLegend = null;
+        let usoSoloLegend = null;
         let prediosLegend = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -690,19 +737,86 @@
             }
         }
 
+        async function toggleGabaritos2011Layer() {
+            if (gabaritosAbn2011LayerGroup) {
+                map.removeLayer(gabaritosAbn2011LayerGroup);
+                gabaritosAbn2011LayerGroup = null;
+            } else {
+                try {
+                    gabaritosAbn2011LayerGroup = L.layerGroup();
+                    const promises = gabaritosAbn2011Data.map(data => 
+                        loadGeoJsonLayer(data.url, {
+                            pane: 'gabaritosPane',
+                            style: { color: data.color, fillColor: data.color, fillOpacity: 0.8, weight: 1 }
+                        })
+                    );
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => gabaritosAbn2011LayerGroup.addLayer(layer));
+                    gabaritosAbn2011LayerGroup.addTo(map);
+                } catch (error) {
+                    console.error("Erro ao carregar camadas de Gabaritos ABN 2011:", error);
+                }
+            }
+            updateGabaritosAbnLegend();
+        }
+
+        async function toggleGabaritos2024Layer() {
+            if (gabaritosAbn2024LayerGroup) {
+                map.removeLayer(gabaritosAbn2024LayerGroup);
+                gabaritosAbn2024LayerGroup = null;
+            } else {
+                try {
+                    gabaritosAbn2024LayerGroup = L.layerGroup();
+                    const promises = gabaritosAbn2024Data.map(data => 
+                        loadGeoJsonLayer(data.url, {
+                            pane: 'gabaritosPane',
+                            style: { color: data.color, fillColor: data.color, fillOpacity: 0.8, weight: 1 }
+                        })
+                    );
+                    const loadedLayers = await Promise.all(promises);
+                    loadedLayers.forEach(layer => gabaritosAbn2024LayerGroup.addLayer(layer));
+                    gabaritosAbn2024LayerGroup.addTo(map);
+                } catch (error) {
+                    console.error("Erro ao carregar camadas de Gabaritos ABN 2024:", error);
+                }
+            }
+            updateGabaritosAbnLegend();
+        }
+
+        function updateGabaritosAbnLegend() {
+            const is2011Active = !!gabaritosAbn2011LayerGroup;
+            const is2024Active = !!gabaritosAbn2024LayerGroup;
+
+            if (!is2011Active && !is2024Active) {
+                if (gabaritosAbnLegend) {
+                    map.removeControl(gabaritosAbnLegend);
+                    gabaritosAbnLegend = null;
+                }
+                return;
+            }
+
+            if (!gabaritosAbnLegend) {
+                gabaritosAbnLegend = L.control({position: 'bottomright'});
+                gabaritosAbnLegend.onAdd = function(map) {
+                    const div = L.DomUtil.create('div', 'info legend');
+                    div.innerHTML += '<h4>Gabaritos ABN (m)</h4>';
+                    gabaritosAbnLegendData.forEach(item => {
+                        div.innerHTML += `<i style="background:${item.color}; opacity: 0.8;"></i> ${item.name}<br>`;
+                    });
+                    return div;
+                };
+                gabaritosAbnLegend.addTo(map);
+            }
+        }
+
         async function toggleUsoSolo2011Layer() {
-            if (usoSolo2011LayerGroup && map.hasLayer(usoSolo2011LayerGroup)) {
+            if (usoSolo2011LayerGroup) {
                 map.removeLayer(usoSolo2011LayerGroup);
                 usoSolo2011LayerGroup = null;
-                if (!usoSolo2024LayerGroup && usoSoloLegend) {
-                    map.removeControl(usoSoloLegend);
-                    usoSoloLegend = null;
-                }
             } else {
                 try {
                     usoSolo2011LayerGroup = L.layerGroup();
                     const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2011): ${layerName}`);
-
                     const promises = usoSoloData.map(data => 
                         loadGeoJsonLayer(data.url_2011, {
                             pane: 'gabaritosPane',
@@ -713,38 +827,21 @@
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => usoSolo2011LayerGroup.addLayer(layer));
                     usoSolo2011LayerGroup.addTo(map);
-
-                    if (!usoSoloLegend) {
-                        usoSoloLegend = L.control({position: 'bottomright'});
-                        usoSoloLegend.onAdd = function (map) {
-                            const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>Uso do Solo</h4>';
-                            usoSoloData.forEach(item => {
-                                div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
-                            });
-                            return div;
-                        };
-                        usoSoloLegend.addTo(map);
-                    }
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de Uso do Solo 2011:", error);
                 }
             }
+            updateUsoSoloLegend();
         }
 
         async function toggleUsoSolo2024Layer() {
-            if (usoSolo2024LayerGroup && map.hasLayer(usoSolo2024LayerGroup)) {
+            if (usoSolo2024LayerGroup) {
                 map.removeLayer(usoSolo2024LayerGroup);
                 usoSolo2024LayerGroup = null;
-                if (!usoSolo2011LayerGroup && usoSoloLegend) {
-                    map.removeControl(usoSoloLegend);
-                    usoSoloLegend = null;
-                }
             } else {
                 try {
                     usoSolo2024LayerGroup = L.layerGroup();
                     const onEachFeaturePopup = (feature, layer, layerName) => layer.bindPopup(`Uso do Solo (2024): ${layerName}`);
-
                     const promises = usoSoloData.map(data => 
                         loadGeoJsonLayer(data.url_2024, {
                             pane: 'gabaritosPane',
@@ -755,22 +852,36 @@
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => usoSolo2024LayerGroup.addLayer(layer));
                     usoSolo2024LayerGroup.addTo(map);
-
-                    if (!usoSoloLegend) {
-                        usoSoloLegend = L.control({position: 'bottomright'});
-                        usoSoloLegend.onAdd = function (map) {
-                            const div = L.DomUtil.create('div', 'info legend');
-                            div.innerHTML += '<h4>Uso do Solo</h4>';
-                            usoSoloData.forEach(item => {
-                                div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
-                            });
-                            return div;
-                        };
-                        usoSoloLegend.addTo(map);
-                    }
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de Uso do Solo 2024:", error);
                 }
+            }
+            updateUsoSoloLegend();
+        }
+
+        function updateUsoSoloLegend() {
+            const is2011Active = !!usoSolo2011LayerGroup;
+            const is2024Active = !!usoSolo2024LayerGroup;
+
+            if (!is2011Active && !is2024Active) {
+                if (usoSoloLegend) {
+                    map.removeControl(usoSoloLegend);
+                    usoSoloLegend = null;
+                }
+                return;
+            }
+            
+            if (!usoSoloLegend) {
+                usoSoloLegend = L.control({position: 'bottomright'});
+                usoSoloLegend.onAdd = function (map) {
+                    const div = L.DomUtil.create('div', 'info legend');
+                    div.innerHTML += '<h4>Uso do Solo</h4>';
+                    usoSoloData.forEach(item => {
+                        div.innerHTML += `<i style="background:${item.style.fillColor}; opacity: 0.8;"></i> ${item.name}<br>`;
+                    });
+                    return div;
+                };
+                usoSoloLegend.addTo(map);
             }
         }
 
@@ -781,46 +892,14 @@
             } else {
                 try {
                     verdesLayer = L.layerGroup();
-
                     const vegetationLayersData = [
-                        {
-                            url: vegetacaoJsonUrl,
-                            options: {
-                                pane: 'vegetationPane',
-                                style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }),
-                                onEachFeature: (feature, layer) => { layer.bindPopup("Área de Vegetação"); }
-                            }
-                        },
-                        {
-                            url: vegetacaoJardJsonUrl,
-                            options: {
-                                pane: 'vegetationPane',
-                                style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }),
-                                onEachFeature: (feature, layer) => { layer.bindPopup("Jardim"); }
-                            }
-                        },
-                        {
-                            url: vegetacaoArvoresJsonUrl,
-                            options: {
-                                pane: 'vegetationPane',
-                                pointToLayer: (feature, latlng) => {
-                                    const treeIcon = L.divIcon({
-                                        html: '🌳',
-                                        className: 'custom-tree-icon',
-                                        iconSize: [20, 20]
-                                    });
-                                    return L.marker(latlng, { icon: treeIcon });
-                                },
-                                onEachFeature: (feature, layer) => { layer.bindPopup("Árvore"); }
-                            }
-                        }
+                        { url: vegetacaoJsonUrl, options: { pane: 'vegetationPane', style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }), onEachFeature: (f, l) => l.bindPopup("Área de Vegetação") } },
+                        { url: vegetacaoJardJsonUrl, options: { pane: 'vegetationPane', style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }), onEachFeature: (f, l) => l.bindPopup("Jardim") } },
+                        { url: vegetacaoArvoresJsonUrl, options: { pane: 'vegetationPane', pointToLayer: (f, latlng) => L.marker(latlng, { icon: L.divIcon({ html: '🌳', className: 'custom-tree-icon', iconSize: [20, 20] }) }), onEachFeature: (f, l) => l.bindPopup("Árvore") } }
                     ];
-
                     const promises = vegetationLayersData.map(data => loadGeoJsonLayer(data.url, data.options));
-
                     const loadedLayers = await Promise.all(promises);
                     loadedLayers.forEach(layer => verdesLayer.addLayer(layer));
-                    
                     verdesLayer.addTo(map);
                 } catch (error) {
                     console.error("Erro ao carregar as camadas de vegetação:", error);
@@ -836,15 +915,8 @@
                 try {
                     projetosFmlfLayer = await loadGeoJsonLayer(projetosFmlfUrl, {
                         pane: 'projetosPane',
-                        style: (feature) => ({
-                            color: "#d53cd4",
-                            weight: 0,
-                            fillColor: "#d53cd4",
-                            fillOpacity: 0.4
-                        }),
-                        onEachFeature: (feature, layer) => {
-                            layer.bindPopup("Área de Projetos FMLF");
-                        }
+                        style: (feature) => ({ color: "#d53cd4", weight: 0, fillColor: "#d53cd4", fillOpacity: 0.4 }),
+                        onEachFeature: (feature, layer) => { layer.bindPopup("Área de Projetos FMLF"); }
                     });
                     projetosFmlfLayer.addTo(map);
                 } catch (error) {
