@@ -325,6 +325,9 @@
                         <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">1870</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">A Ladeira da Barra recebe seus primeiros sinais de urbanização, com pavimentação, calçadas e lampiões. A paisagem ainda é predominantemente rural.</p>
+                            <div class="mt-4">
+                                <img src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_1870.jpg" alt="Paisagem da Barra em 1870" class="clickable-image rounded-lg shadow-md cursor-pointer w-full hover:opacity-80 transition-opacity">
+                            </div>
                         </div>
                     </div>
 
@@ -336,6 +339,9 @@
                         <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">1920</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">O bairro se consolida como área urbanizada. Bondes e rede elétrica chegam, e as casas passam a ter jardins e recuos, refletindo um novo modo de vida.</p>
+                             <div class="mt-4">
+                                <img src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_1920.jpg" alt="Paisagem da Barra em 1920" class="clickable-image rounded-lg shadow-md cursor-pointer w-full hover:opacity-80 transition-opacity">
+                            </div>
                         </div>
                     </div>
                     
@@ -347,6 +353,9 @@
                         <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">1950</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">A chegada da arquitetura moderna. O Edifício Oceania inaugura a verticalização, mudando para sempre a paisagem horizontal da orla.</p>
+                             <div class="mt-4">
+                                <img src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_1950.png" alt="Paisagem da Barra em 1950" class="clickable-image rounded-lg shadow-md cursor-pointer w-full hover:opacity-80 transition-opacity">
+                            </div>
                         </div>
                     </div>
 
@@ -358,13 +367,20 @@
                         <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">Hoje</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">Aceleração da verticalização com foco em "studios". Antigos casarões e comércios de bairro dão lugar a prédios voltados para o turismo de massa.</p>
+                             <div class="mt-4">
+                                <img src="https://placehold.co/600x400/e2e8f0/4a5568?text=Imagem+de+Hoje" alt="Paisagem da Barra hoje" class="clickable-image rounded-lg shadow-md cursor-pointer w-full hover:opacity-80 transition-opacity">
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- Title for the descriptive text -->
+                <h3 class="text-3xl md:text-4xl font-bold text-center mb-4 fade-in-element">Do Casarão ao Arranha-Céu</h3>
+                <!-- Descriptive text for the image -->
+                <p class="max-w-3xl mx-auto text-center text-lg text-gray-700 my-8 fade-in-element">A drástica alteração no gabarito da Barra ilustrada na imagem, documenta a veloz substituição da paisagem de casarões por uma muralha de novos e altos empreendimentos. Esta é a representação visual e objetiva da pressão do mercado imobiliário, que apaga a morfologia histórica para dar lugar a uma nova, e muito mais densa, configuração urbana.</p>
                 <!-- Image container with constrained size -->
-                <div class="mt-10 fade-in-element max-w-4xl mx-auto">
-                    <div id="image-container" class="flex justify-center">
-                        <img src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_PREDIOS.png" alt="Evolução do gabarito da Barra" class="rounded-lg shadow-lg cursor-pointer hover:opacity-80 transition-opacity w-full">
+                <div class="fade-in-element max-w-4xl mx-auto">
+                    <div class="flex justify-center">
+                        <img src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_PREDIOS.png" alt="Evolução do gabarito da Barra" class="clickable-image rounded-lg shadow-lg cursor-pointer hover:opacity-80 transition-opacity w-full">
                     </div>
                 </div>
             </div>
@@ -375,7 +391,7 @@
             <div class="relative bg-white p-4 rounded-lg shadow-2xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
                 <button id="close-modal" class="absolute top-2 right-2 text-white bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-2xl font-bold hover:bg-gray-600 z-20">&times;</button>
                 <div id="modal-image-wrapper" class="relative flex-grow overflow-auto w-full h-full">
-                     <img id="modal-image" src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_PREDIOS.png" alt="Evolução do gabarito da Barra">
+                     <img id="modal-image" src="" alt="Imagem ampliada">
                 </div>
                 <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                     <button id="zoom-in" class="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-gray-600">+</button>
@@ -1017,22 +1033,25 @@
         }
 
         // --- Lógica do Modal da Imagem com Pan e Zoom ---
-        const imageContainer = document.getElementById('image-container');
         const modal = document.getElementById('image-modal');
         const closeModalBtn = document.getElementById('close-modal');
         const modalImageWrapper = document.getElementById('modal-image-wrapper');
         const modalImage = document.getElementById('modal-image');
         const zoomInBtn = document.getElementById('zoom-in');
         const zoomOutBtn = document.getElementById('zoom-out');
+        const clickableImages = document.querySelectorAll('.clickable-image');
         
         let modalCurrentScale = 1;
         let isDragging = false;
         let startX, startY, scrollLeft, scrollTop;
 
         // Abrir o modal
-        imageContainer.addEventListener('click', () => {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+        clickableImages.forEach(image => {
+            image.addEventListener('click', (e) => {
+                modalImage.src = e.target.src;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            });
         });
 
         const closeModalFunction = () => {
