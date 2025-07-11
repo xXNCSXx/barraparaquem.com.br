@@ -520,7 +520,6 @@
         
         const vegetacaoJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Mapa_Veg.geojson';
         const vegetacaoJardJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Vegetacao_jard.geojson';
-        const vegetacaoArvoresJsonUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Vegetacao_arvores.geojson';
 		const poligonalBairroUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Poligonal_Bairro_Barra.geojson';
         const airDnaUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/AirDNA.geojson';
         const projetosFmlfUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Area_Projetos_FMLF.geojson';
@@ -938,22 +937,8 @@
                                 style: () => ({ weight: 0, fillColor: "#32CD32", fillOpacity: 0.5 }),
                                 onEachFeature: (feature, layer) => { layer.bindPopup("Jardim"); }
                             }
-                        },
-                        {
-                            url: vegetacaoArvoresJsonUrl,
-                            options: {
-                                pane: 'vegetationPane',
-                                pointToLayer: (feature, latlng) => {
-                                    const treeIcon = L.divIcon({
-                                        html: '�',
-                                        className: 'custom-tree-icon',
-                                        iconSize: [20, 20]
-                                    });
-                                    return L.marker(latlng, { icon: treeIcon });
-                                },
-                                onEachFeature: (feature, layer) => { layer.bindPopup("Árvore"); }
-                            }
                         }
+
                     ];
 
                     const promises = vegetationLayersData.map(data => loadGeoJsonLayer(data.url, data.options));
