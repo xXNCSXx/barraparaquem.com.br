@@ -246,6 +246,27 @@
             background: transparent;
             border: none;
         }
+        /* Estilos para o Pan e Zoom da imagem no modal */
+        #modal-image-wrapper {
+            cursor: default;
+            /* O wrapper agora é um container flex para centralizar a imagem */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #modal-image-wrapper.pannable {
+            cursor: grab;
+        }
+        #modal-image-wrapper.pannable:active {
+            cursor: grabbing;
+        }
+        /* A imagem não deve ser maior que o wrapper por padrão */
+        #modal-image {
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.3s ease-in-out;
+            transform-origin: center center;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -340,11 +361,28 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex justify-center mt-10 fade-in-element">
-                    <img src="https://placehold.co/800x450/e2e8f0/334155?text=Desenho+da+evolução+dos+prédios+na+Barra" alt="Evolução do gabarito da Barra" class="rounded-lg shadow-lg">
+                <!-- Image container with constrained size -->
+                <div class="mt-10 fade-in-element max-w-4xl mx-auto">
+                    <div id="image-container" class="flex justify-center">
+                        <img src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_PREDIOS.png" alt="Evolução do gabarito da Barra" class="rounded-lg shadow-lg cursor-pointer hover:opacity-80 transition-opacity w-full">
+                    </div>
                 </div>
             </div>
         </section>
+
+        <!-- Modal Structure for Image Scaling -->
+        <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+            <div class="relative bg-white p-4 rounded-lg shadow-2xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
+                <button id="close-modal" class="absolute top-2 right-2 text-white bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-2xl font-bold hover:bg-gray-600 z-20">&times;</button>
+                <div id="modal-image-wrapper" class="relative flex-grow overflow-auto w-full h-full">
+                     <img id="modal-image" src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_PREDIOS.png" alt="Evolução do gabarito da Barra">
+                </div>
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                    <button id="zoom-in" class="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-gray-600">+</button>
+                    <button id="zoom-out" class="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-gray-600">-</button>
+                </div>
+            </div>
+        </div>
 
 
         <section class="py-20 bg-white">
@@ -977,7 +1015,96 @@
                 }
             }
         }
+
+        // --- Lógica do Modal da Imagem com Pan e Zoom ---
+        const imageContainer = document.getElementById('image-container');
+        const modal = document.getElementById('image-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalImageWrapper = document.getElementById('modal-image-wrapper');
+        const modalImage = document.getElementById('modal-image');
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
+        
+        let modalCurrentScale = 1;
+        let isDragging = false;
+        let startX, startY, scrollLeft, scrollTop;
+
+        // Abrir o modal
+        imageContainer.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+
+        const closeModalFunction = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            // Reseta o zoom e o pan do modal ao fechar
+            modalCurrentScale = 1;
+            modalImage.style.transform = `scale(${modalCurrentScale})`;
+            modalImageWrapper.classList.remove('pannable');
+            // Reseta a posição do scroll
+            modalImageWrapper.scrollTop = 0;
+            modalImageWrapper.scrollLeft = 0;
+        };
+
+        closeModalBtn.addEventListener('click', closeModalFunction);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModalFunction();
+            }
+        });
+
+        // Controles de zoom do MODAL
+        const updateZoom = () => {
+            modalImage.style.transform = `scale(${modalCurrentScale})`;
+            if (modalCurrentScale > 1) {
+                modalImageWrapper.classList.add('pannable');
+            } else {
+                modalImageWrapper.classList.remove('pannable');
+            }
+        }
+
+        zoomInBtn.addEventListener('click', () => {
+            modalCurrentScale += 0.2;
+            updateZoom();
+        });
+
+        zoomOutBtn.addEventListener('click', () => {
+            modalCurrentScale = Math.max(1, modalCurrentScale - 0.2); // Permite reduzir até a escala original (1)
+            updateZoom();
+        });
+        
+        // Lógica de Pan (arrastar)
+        modalImageWrapper.addEventListener('mousedown', (e) => {
+            if (!modalImageWrapper.classList.contains('pannable')) return;
+            e.preventDefault(); // Previne o comportamento padrão de arrastar imagem
+            isDragging = true;
+            startX = e.pageX - modalImageWrapper.offsetLeft;
+            startY = e.pageY - modalImageWrapper.offsetTop;
+            scrollLeft = modalImageWrapper.scrollLeft;
+            scrollTop = modalImageWrapper.scrollTop;
+        });
+
+        modalImageWrapper.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        modalImageWrapper.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        modalImageWrapper.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - modalImageWrapper.offsetLeft;
+            const y = e.pageY - modalImageWrapper.offsetTop;
+            const walkX = (x - startX);
+            const walkY = (y - startY);
+            modalImageWrapper.scrollLeft = scrollLeft - walkX;
+            modalImageWrapper.scrollTop = scrollTop - walkY;
+        });
+
     </script>
 </body>
 </html>
-�
