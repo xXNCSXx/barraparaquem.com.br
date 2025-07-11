@@ -26,6 +26,8 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
       
         // Your web app's Firebase configuration
+        // ATENÇÃO: É uma boa prática não expor a chave da API diretamente no código do lado do cliente.
+        // Considere usar variáveis de ambiente ou um backend para mais segurança.
         const firebaseConfig = {
           apiKey: "AIzaSyBTXc-j0XmjB-KsZCxUCXNBz7j3N5cNxoE",
           authDomain: "barra-em-transformacao-site.firebaseapp.com",
@@ -50,7 +52,6 @@
             try {
                 const commentDocRef = doc(db, "comentarios", id);
                 await deleteDoc(commentDocRef);
-                // O 'onSnapshot' irá atualizar a lista automaticamente.
             } catch (error) {
                 console.error("Erro ao apagar comentário: ", error);
                 alert("Ocorreu um erro ao apagar o comentário.");
@@ -63,13 +64,13 @@
             const q = query(commentsRef);
 
             onSnapshot(q, (querySnapshot) => {
-                commentsList.innerHTML = ''; // Limpa a lista antes de adicionar os novos comentários
+                commentsList.innerHTML = ''; // Limpa a lista
                 const comments = [];
                 querySnapshot.forEach((doc) => {
                     comments.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordena os comentários por data (mais recentes primeiro) no lado do cliente
+                // Ordena os comentários por data (mais recentes primeiro)
                 comments.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
 
                 if (comments.length === 0) {
@@ -83,7 +84,6 @@
                             day: '2-digit', month: 'long', year: 'numeric'
                         });
 
-                        // Adiciona o botão de apagar
                         commentElement.innerHTML = `
                             <div class="flex justify-between items-start">
                                 <div>
@@ -132,14 +132,13 @@
         commentsList.addEventListener('click', (e) => {
             if (e.target && e.target.classList.contains('delete-comment-btn')) {
                 const id = e.target.dataset.id;
-                // ATENÇÃO: Este é um método de segurança simples apenas para demonstração.
                 const password = prompt("Para apagar, digite a senha de administrador:");
                 
-                if (password === "farol") { // Senha de demonstração. Altere se desejar.
+                if (password === "farol") {
                     if(confirm("Tem certeza que deseja apagar este comentário? Esta ação não pode ser desfeita.")) {
                         deleteComment(id);
                     }
-                } else if (password !== null) { // Se o usuário digitou algo e não apenas cancelou
+                } else if (password !== null) {
                     alert("Senha incorreta.");
                 }
             }
@@ -190,27 +189,56 @@
         .leaflet-popup-content-wrapper {
             border-radius: 0.375rem;
         }
-         /* Estilo para contadores animados */
          .counter {
             transition: all 1.5s ease-out;
         }
         
-        /* Estilização da linha do tempo */
-        .timeline-item::before {
-            content: '';
+        /* Estilização da linha do tempo responsiva */
+        .timeline-line {
             position: absolute;
-            top: 1.25rem;
-            left: -0.5rem;
-            width: 1rem;
-            height: 1rem;
-            background-color: var(--cor-principal);
-            border-radius: 9999px;
-            border: 3px solid var(--cor-fundo);
+            left: 1.5rem; /* Posição para mobile */
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #e5e7eb;
         }
 
-        /* Estilo personalizado para os ícones de cluster */
+        .timeline-item-dot {
+            position: absolute;
+            left: 1.5rem; /* Alinha com a linha */
+            top: 1rem;
+            transform: translateX(-50%);
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: var(--cor-principal);
+            border-radius: 9999px;
+            border: 4px solid var(--cor-fundo);
+            z-index: 10;
+        }
+
+        /* Estilos da linha do tempo para telas maiores (desktop) */
+        @media (min-width: 768px) {
+            .timeline-line {
+                left: 50%; /* Centraliza a linha */
+                transform: translateX(-50%);
+            }
+            .timeline-item-dot {
+                left: 50%; /* Centraliza o ponto */
+            }
+            .timeline-content-container {
+                width: 50%;
+                padding-left: 3rem; /* Espaçamento da linha central */
+                padding-right: 0;
+            }
+            .timeline-item.md\:flex-row-reverse .timeline-content-container {
+                text-align: right;
+                padding-left: 0;
+                padding-right: 3rem; /* Espaçamento da linha central */
+            }
+        }
+
         .custom-cluster-icon {
-            background-color: #4183c4; /* Nova cor de preenchimento */
+            background-color: #4183c4;
             color: white;
             border-radius: 50%;
             text-align: center;
@@ -218,11 +246,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid #2a72b2; /* Nova cor de contorno */
+            border: 2px solid #2a72b2;
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
-        /* Estilo para a legenda do mapa */
         .info.legend {
             background-color: white;
             padding: 10px;
@@ -241,15 +268,9 @@
             margin-right: 8px;
             opacity: 1;
         }
-        .custom-tree-icon {
-            font-size: 18px;
-            background: transparent;
-            border: none;
-        }
-        /* Estilos para o Pan e Zoom da imagem no modal */
+        
         #modal-image-wrapper {
             cursor: default;
-            /* O wrapper agora é um container flex para centralizar a imagem */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -260,7 +281,6 @@
         #modal-image-wrapper.pannable:active {
             cursor: grabbing;
         }
-        /* A imagem não deve ser maior que o wrapper por padrão */
         #modal-image {
             max-width: 100%;
             max-height: 100%;
@@ -286,24 +306,24 @@
 
     <main class="overflow-x-hidden">
         
-        <section class="py-20 bg-white">
+        <section class="py-16 md:py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4 fade-in-element">A Nova Realidade da Barra</h2>
-                <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-16 fade-in-element">Os números revelam uma mudança drástica, impulsionada pelo mercado imobiliário e pelo turismo.</p>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-12 md:mb-16 fade-in-element">Os números revelam uma mudança drástica, impulsionada pelo mercado imobiliário e pelo turismo.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                     <div class="p-8 rounded-xl shadow-lg bg-gray-50 fade-in-element">
-                        <div class="text-6xl font-black text-[var(--cor-destaque)] mb-4 counter" data-target="2757">0</div>
+                        <div class="text-5xl md:text-6xl font-black text-[var(--cor-destaque)] mb-4 counter" data-target="2757">0</div>
                         <h3 class="text-xl font-bold mb-2">Anúncios Ativos</h3>
                         <p class="text-gray-600">de aluguel por temporada no bairro, uma das maiores concentrações da cidade.</p>
                     </div>
                     <div class="p-8 rounded-xl shadow-lg bg-gray-50 fade-in-element" style="transition-delay: 200ms;">
-                        <div class="text-6xl font-black text-[var(--cor-destaque)] mb-4"><span class="counter" data-target="76">0</span>%</div>
+                        <div class="text-5xl md:text-6xl font-black text-[var(--cor-destaque)] mb-4"><span class="counter" data-target="76">0</span>%</div>
                         <h3 class="text-xl font-bold mb-2">Imóveis Compactos</h3>
                         <p class="text-gray-600">dos novos empreendimentos possuem unidades com área útil entre 15m² e 35m².</p>
                     </div>
                     <div class="p-8 rounded-xl shadow-lg bg-gray-50 fade-in-element" style="transition-delay: 400ms;">
-                        <div class="text-6xl font-black text-[var(--cor-destaque)] mb-4"><span class="counter" data-target="2">0</span>x</div>
+                        <div class="text-5xl md:text-6xl font-black text-[var(--cor-destaque)] mb-4"><span class="counter" data-target="2">0</span>x</div>
                         <h3 class="text-xl font-bold mb-2">Maior Rentabilidade</h3>
                         <p class="text-gray-600">A locação de curta duração (temporada) chega a ser duas vezes mais rentável que a locação tradicional.</p>
                     </div>
@@ -311,18 +331,18 @@
             </div>
         </section>
 
-        <section class="py-20 bg-[var(--cor-fundo)]">
+        <section class="py-16 md:py-20 bg-[var(--cor-fundo)]">
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 fade-in-element">Uma Viagem no Tempo</h2>
-                <div class="relative wrap overflow-hidden p-10 h-full">
-                    <div class="border-2-2 absolute border-opacity-20 border-gray-700 h-full border" style="left: 50%"></div>
+                
+                <div class="relative wrap overflow-hidden p-4 md:p-10 h-full">
+                    <div class="timeline-line"></div>
                     
-                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto font-bold text-white text-lg">1</h3>
-                        </div>
-                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                    <!-- Item 1 -->
+                    <div class="mb-8 flex justify-start md:justify-between items-start w-full timeline-item">
+                        <div class="hidden md:block w-5/12"></div>
+                        <div class="timeline-item-dot"></div>
+                        <div class="bg-white rounded-lg shadow-xl px-6 py-4 fade-in-element timeline-content-container ml-8 md:ml-0">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">1870</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">A Ladeira da Barra recebe seus primeiros sinais de urbanização, com pavimentação, calçadas e lampiões. A paisagem ainda é predominantemente rural.</p>
                             <div class="mt-4">
@@ -331,12 +351,11 @@
                         </div>
                     </div>
 
-                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto text-white font-bold text-lg">2</h3>
-                        </div>
-                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                    <!-- Item 2 -->
+                    <div class="mb-8 flex justify-start md:justify-between md:flex-row-reverse items-start w-full timeline-item">
+                        <div class="hidden md:block w-5/12"></div>
+                        <div class="timeline-item-dot"></div>
+                        <div class="bg-white rounded-lg shadow-xl px-6 py-4 fade-in-element timeline-content-container ml-8 md:ml-0">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">1920</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">O bairro se consolida como área urbanizada. Bondes e rede elétrica chegam, e as casas passam a ter jardins e recuos, refletindo um novo modo de vida.</p>
                              <div class="mt-4">
@@ -345,12 +364,11 @@
                         </div>
                     </div>
                     
-                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto font-bold text-white text-lg">3</h3>
-                        </div>
-                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                    <!-- Item 3 -->
+                    <div class="mb-8 flex justify-start md:justify-between items-start w-full timeline-item">
+                        <div class="hidden md:block w-5/12"></div>
+                        <div class="timeline-item-dot"></div>
+                        <div class="bg-white rounded-lg shadow-xl px-6 py-4 fade-in-element timeline-content-container ml-8 md:ml-0">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">1950</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">A chegada da arquitetura moderna. O Edifício Oceania inaugura a verticalização, mudando para sempre a paisagem horizontal da orla.</p>
                              <div class="mt-4">
@@ -359,12 +377,11 @@
                         </div>
                     </div>
 
-                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-[var(--cor-principal)] shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto text-white font-bold text-lg">4</h3>
-                        </div>
-                        <div class="order-1 bg-white rounded-lg shadow-xl w-5/12 px-6 py-4 fade-in-element">
+                    <!-- Item 4 -->
+                    <div class="mb-8 flex justify-start md:justify-between md:flex-row-reverse items-start w-full timeline-item">
+                        <div class="hidden md:block w-5/12"></div>
+                        <div class="timeline-item-dot"></div>
+                        <div class="bg-white rounded-lg shadow-xl px-6 py-4 fade-in-element timeline-content-container ml-8 md:ml-0">
                             <h3 class="mb-3 font-bold text-gray-800 text-xl">Hoje</h3>
                             <p class="text-sm leading-snug tracking-wide text-gray-600">Aceleração da verticalização com foco em "studios". Antigos casarões e comércios de bairro dão lugar a prédios voltados para o turismo de massa.</p>
                              <div class="mt-4">
@@ -373,11 +390,9 @@
                         </div>
                     </div>
                 </div>
-                <!-- Title for the descriptive text -->
-                <h3 class="text-3xl md:text-4xl font-bold text-center mb-4 fade-in-element">Do Casarão ao Arranha-Céu</h3>
-                <!-- Descriptive text for the image -->
-                <p class="max-w-3xl mx-auto text-center text-lg text-gray-700 my-8 fade-in-element">A drástica alteração no gabarito da Barra ilustrada na imagem, documenta a veloz substituição da paisagem de casarões por uma muralha de novos e altos empreendimentos. Esta é a representação visual e objetiva da pressão do mercado imobiliário, que apaga a morfologia histórica para dar lugar a uma nova, e muito mais densa, configuração urbana.</p>
-                <!-- Image container with constrained size -->
+
+                <h3 class="text-3xl md:text-4xl font-bold text-center mb-4 fade-in-element mt-12">Do Casarão ao Arranha-Céu</h3>
+                <p class="max-w-3xl mx-auto text-center text-lg text-gray-700 my-8 fade-in-element">A drástica alteração no gabarito da Barra ilustrada na imagem, documenta a veloz substituição da paisagem de casarões por uma muralha de novos e altos empreendimentos.</p>
                 <div class="fade-in-element max-w-4xl mx-auto">
                     <div class="flex justify-center">
                         <img src="https://xxncsxx.github.io/barraparaquem.com.br/IMG/EVO_PREDIOS.png" alt="Evolução do gabarito da Barra" class="clickable-image rounded-lg shadow-lg cursor-pointer hover:opacity-80 transition-opacity w-full">
@@ -386,7 +401,6 @@
             </div>
         </section>
 
-        <!-- Modal Structure for Image Scaling -->
         <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
             <div class="relative bg-white p-4 rounded-lg shadow-2xl w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
                 <button id="close-modal" class="absolute top-2 right-2 text-white bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center text-2xl font-bold hover:bg-gray-600 z-20">&times;</button>
@@ -400,55 +414,53 @@
             </div>
         </div>
 
-
-        <section class="py-20 bg-white">
+        <section class="py-16 md:py-20 bg-white">
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 fade-in-element">O Mapa da Transformação</h2>
                 <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-12 fade-in-element">Explore as camadas de mudança que redesenham o bairro.</p>
                 <div class="bg-gray-100 rounded-lg shadow-2xl p-4 md:p-8 fade-in-element">
                     
-                    <div id="map" class="w-full h-[60vh] rounded-md"></div>
+                    <div id="map" class="w-full h-[60vh] md:h-[70vh] rounded-md"></div>
                     
-                    <div class="mt-6 flex flex-wrap justify-center gap-4">
-                        <button onclick="togglePrediosLayer()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors">Novos Empreendimentos</button>
-                        <button onclick="toggleAirDnaLayer()" class="px-6 py-2 bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">Levantamento dos AirBNBs</button>
-                        <button onclick="toggleGabaritosLayer()" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos (PDDU 2016)</button>
-                        <button onclick="toggleGabaritos2008Layer()" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos (PDDU 2008)</button>
-                        <button onclick="toggleUsoSolo2011Layer()" class="px-6 py-2 bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do solo (2011)</button>
-                        <button onclick="toggleUsoSolo2024Layer()" class="px-6 py-2 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do solo (2024)</button>
-                        <button onclick="toggleVerdesLayer()" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes (2019)</button>
-                        <button onclick="toggleProjetosFmlfLayer()" class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área revitalizadas (2021)</button>
+                    <div class="mt-6 flex flex-wrap justify-center gap-3 md:gap-4">
+                        <button onclick="togglePrediosLayer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors">Novos Empreendimentos</button>
+                        <button onclick="toggleAirDnaLayer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-cyan-600 text-white font-semibold rounded-lg shadow-md hover:bg-cyan-700 transition-colors">Levantamento dos AirBNBs</button>
+                        <button onclick="toggleGabaritosLayer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">Gabaritos (PDDU 2016)</button>
+                        <button onclick="toggleGabaritos2008Layer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors">Gabaritos (PDDU 2008)</button>
+                        <button onclick="toggleUsoSolo2011Layer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-fuchsia-600 text-white font-semibold rounded-lg shadow-md hover:bg-fuchsia-700 transition-colors">Uso do solo (2011)</button>
+                        <button onclick="toggleUsoSolo2024Layer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 transition-colors">Uso do solo (2024)</button>
+                        <button onclick="toggleVerdesLayer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition-colors">Áreas Verdes (2019)</button>
+                        <button onclick="toggleProjetosFmlfLayer()" class="px-4 py-2 text-sm md:px-6 md:py-2 md:text-base bg-orange-500 text-white font-semibold rounded-lg shadow-md hover:bg-orange-600 transition-colors">Área revitalizadas (2021)</button>
                     </div>
                 </div>
             </div>
         </section>
         
-         <section class="py-20 bg-slate-800 text-white">
+         <section class="py-16 md:py-20 bg-slate-800 text-white">
             <div class="container mx-auto px-6 text-center">
                 <h2 class="text-3xl md:text-4xl font-bold mb-12 fade-in-element">Vozes da Barra</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="p-8 border border-slate-700 rounded-lg bg-slate-800/50 fade-in-element">
-                        <p class="text-xl italic">"Sou a única moradora fixa do meu andar. O resto é turista que muda toda semana."</p>
+                        <p class="text-lg md:text-xl italic">"Sou a única moradora fixa do meu andar. O resto é turista que muda toda semana."</p>
                         <span class="block mt-4 text-sm text-slate-400">- Moradora antiga</span>
                     </div>
                      <div class="p-8 border border-slate-700 rounded-lg bg-slate-800/50 fade-in-element" style="transition-delay: 200ms;">
-                        <p class="text-xl italic">"Gostava mais das casas antigas, tinha mais vida. Agora é só parede de prédio e portão de garagem."</p>
+                        <p class="text-lg md:text-xl italic">"Gostava mais das casas antigas, tinha mais vida. Agora é só parede de prédio e portão de garagem."</p>
                         <span class="block mt-4 text-sm text-slate-400">- Comerciante local</span>
                     </div>
                      <div class="p-8 border border-slate-700 rounded-lg bg-slate-800/50 fade-in-element" style="transition-delay: 400ms;">
-                        <p class="text-xl italic">"É prédio pra todo lado. A gente não vive só de Carnaval e turista, a gente vive aqui o ano todo."</p>
+                        <p class="text-lg md:text-xl italic">"É prédio pra todo lado. A gente não vive só de Carnaval e turista, a gente vive aqui o ano todo."</p>
                         <span class="block mt-4 text-sm text-slate-400">- Trabalhador do bairro</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEÇÃO DE COMENTÁRIOS COM FIREBASE -->
-        <section class="py-20 bg-white">
+        <section class="py-16 md:py-20 bg-white">
             <div class="container mx-auto px-6">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 fade-in-element">Deixe sua Opinião</h2>
                 <div class="max-w-2xl mx-auto">
-                    <div class="mb-12 p-8 bg-gray-50 rounded-lg shadow-lg fade-in-element">
+                    <div class="mb-12 p-6 md:p-8 bg-gray-50 rounded-lg shadow-lg fade-in-element">
                         <h3 class="text-2xl font-bold mb-4">Escreva seu comentário</h3>
                         <form id="comment-form">
                             <div class="mb-4">
@@ -478,19 +490,14 @@
                     </div>
 
                     <h3 class="text-2xl font-bold mb-6 fade-in-element">Comentários</h3>
-                    <!-- Os comentários serão carregados aqui pelo Firebase -->
                     <div id="comments-list" class="space-y-6">
-                        <!-- Exemplo de como um comentário será exibido -->
-                        <!-- <div class="p-6 border rounded-lg bg-white shadow">
-                            <p class="text-gray-800">"Este é um comentário de exemplo."</p>
-                            <p class="text-sm text-gray-500 mt-3">- <strong>Nome do Autor</strong>, Tipo de Usuário</p>
-                        </div> -->
+                        <!-- Comentários carregados pelo Firebase -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-20 bg-gray-100">
+        <section class="py-16 md:py-20 bg-gray-100">
             <div class="container mx-auto px-6 text-left">
                 <h2 class="text-2xl md:text-3xl font-bold text-center mb-10">Fontes e Referências</h2>
                 <div class="max-w-3xl mx-auto text-gray-700 space-y-4">
@@ -518,7 +525,7 @@
     </footer>
 
     <script>
-        // Lógica de fade-in (sem alterações)
+        // Lógica de fade-in
         const fadeInElements = document.querySelectorAll('.fade-in-element');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -560,7 +567,7 @@
             counterObserver.observe(counter);
         });
 
-        // Efeito de troca de imagem na header (sem alterações)
+        // Efeito de troca de imagem na header
         const heroBg1 = document.getElementById('hero-bg-1');
         const heroBg2 = document.getElementById('hero-bg-2');
         setInterval(() => {
@@ -578,7 +585,6 @@
         const airDnaUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/AirDNA.geojson';
         const projetosFmlfUrl = 'https://xxncsxx.github.io/barraparaquem.com.br/Area_Projetos_FMLF.geojson';
 
-        // URLs e estilos para a camada de Gabaritos 2016
         const gabaritosLayersData = [
             { name: 'Faixa de areia', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/areia_2016.geojson', style: { color: '#e5be8b', fillColor: '#e5be8b', fillOpacity: 0.6, weight: 1 } },
             { name: '6 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/6_2016.geojson', style: { color: '#e17979', fillColor: '#e17979', fillOpacity: 0.8, weight: 1 } },
@@ -590,7 +596,6 @@
             { name: '75 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2016/75_2016.geojson', style: { color: '#a47158', fillColor: '#a47158', fillOpacity: 0.8, weight: 1 } }
         ];
 
-        // URLs e estilos para a camada de Gabaritos 2008
         const gabaritos2008LayersData = [
             { name: '12 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_12m.geojson', style: { color: '#ffff00', fillColor: '#ffff00', fillOpacity: 0.8, weight: 1 } },
             { name: '15 metros', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_15m.geojson', style: { color: '#ff7040', fillColor: '#ff7040', fillOpacity: 0.8, weight: 1 } },
@@ -603,7 +608,6 @@
             { name: 'Preservação', url: 'https://xxncsxx.github.io/barraparaquem.com.br/GAB_2008/faixa_preservacao.geojson', style: { color: '#009090', fillColor: '#009090', fillOpacity: 0.8, weight: 1 } }
         ];
         
-        // Dados e estilos unificados para as camadas de Uso do Solo
         const usoSoloData = [
             { name: 'Residencial', style: { color: '#fcce23', fillColor: '#fcce23', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/RESIDENCIAL_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/RESIDENCIAL_2024.geojson' },
             { name: 'Não Identificado/Abandonado', style: { color: '#fca732', fillColor: '#fca732', fillOpacity: 0.8, weight: 1 }, url_2011: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2011/NAO_IDENTIFICADO_ABANDONADO_OU_SEM_USO_2011.geojson', url_2024: 'https://xxncsxx.github.io/barraparaquem.com.br/MAPA_USO_2024/NAO_IDENTIFICADO_ABANDONADO_SEM_USO_2024.geojson' },
@@ -628,7 +632,7 @@
         let usoSolo2024LayerGroup = null;
         let gabaritosLegend = null;
         let gabaritos2008Legend = null;
-        let usoSoloLegend = null; // Legenda unificada
+        let usoSoloLegend = null;
         let prediosLegend = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1045,7 +1049,6 @@
         let isDragging = false;
         let startX, startY, scrollLeft, scrollTop;
 
-        // Abrir o modal
         clickableImages.forEach(image => {
             image.addEventListener('click', (e) => {
                 modalImage.src = e.target.src;
@@ -1057,11 +1060,9 @@
         const closeModalFunction = () => {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            // Reseta o zoom e o pan do modal ao fechar
             modalCurrentScale = 1;
             modalImage.style.transform = `scale(${modalCurrentScale})`;
             modalImageWrapper.classList.remove('pannable');
-            // Reseta a posição do scroll
             modalImageWrapper.scrollTop = 0;
             modalImageWrapper.scrollLeft = 0;
         };
@@ -1074,7 +1075,6 @@
             }
         });
 
-        // Controles de zoom do MODAL
         const updateZoom = () => {
             modalImage.style.transform = `scale(${modalCurrentScale})`;
             if (modalCurrentScale > 1) {
@@ -1090,14 +1090,13 @@
         });
 
         zoomOutBtn.addEventListener('click', () => {
-            modalCurrentScale = Math.max(1, modalCurrentScale - 0.2); // Permite reduzir até a escala original (1)
+            modalCurrentScale = Math.max(1, modalCurrentScale - 0.2);
             updateZoom();
         });
         
-        // Lógica de Pan (arrastar)
         modalImageWrapper.addEventListener('mousedown', (e) => {
             if (!modalImageWrapper.classList.contains('pannable')) return;
-            e.preventDefault(); // Previne o comportamento padrão de arrastar imagem
+            e.preventDefault();
             isDragging = true;
             startX = e.pageX - modalImageWrapper.offsetLeft;
             startY = e.pageY - modalImageWrapper.offsetTop;
